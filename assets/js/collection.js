@@ -12,8 +12,11 @@ function loadProducts() {
     // Load products from localStorage
     const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
 
-    // Filter out-of-stock items
-    const availableProducts = products.filter(p => p.quantity > 0);
+    // Filter out-of-stock items and inactive products
+    const availableProducts = products.filter(p => {
+        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        return stock > 0 && (p.active !== false);
+    });
 
     if (availableProducts.length === 0) {
         productsGrid.innerHTML = `
@@ -32,23 +35,29 @@ function renderProducts(products) {
     
     productsGrid.innerHTML = products.map(product => {
         const category = categorizeProduct(product);
-        const metal = determineMetalType(product.metal);
-        const lowStock = product.quantity <= 5;
+        const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
+        const metalType = determineMetalType(metal);
+        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const threshold = product.lowStockThreshold ?? 5;
+        const lowStock = stock <= threshold;
+        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const productName = product.title || product.name || "Untitled";
+        const productPrice = product.price ?? 0;
 
         return `
             <div class="product-card" 
                  data-id="${product.id}" 
                  data-category="${category}" 
-                 data-metal="${metal}" 
-                 data-price="${product.price}">
+                 data-metal="${metalType}" 
+                 data-price="${productPrice}">
                 <div class="product-image">
-                    ${product.image ? `<img src="${product.image}" alt="${product.name}" loading="lazy">` : '<div class="no-image">No Image</div>'}
-                    ${lowStock ? `<div class="stock-badge">Only ${product.quantity} left</div>` : ''}
+                    ${primaryImage ? `<img src="${primaryImage}" alt="${productName}" loading="lazy">` : '<div class="no-image">No Image</div>'}
+                    ${lowStock ? `<div class="stock-badge">Only ${stock} left</div>` : ''}
                 </div>
                 <div class="product-info">
-                    <h3>${product.name}</h3>
-                    <p class="product-metal">${product.metal}</p>
-                    <p class="product-price">₹${product.price.toLocaleString('en-IN')}</p>
+                    <h3>${productName}</h3>
+                    <p class="product-metal">${metal}</p>
+                    <p class="product-price">₹${productPrice.toLocaleString('en-IN')}</p>
                     <button class="btn-add-to-cart" data-id="${product.id}">Add to Cart</button>
                 </div>
             </div>
@@ -60,7 +69,7 @@ function renderProducts(products) {
 }
 
 function categorizeProduct(product) {
-    const name = product.name.toLowerCase();
+    const name = (product.title || product.name || "").toLowerCase();
     if (name.includes('ring') && !name.includes('earring')) return 'rings';
     if (name.includes('earring')) return 'earrings';
     if (name.includes('necklace') || name.includes('pendant')) return 'necklaces';
@@ -70,7 +79,7 @@ function categorizeProduct(product) {
 }
 
 function determineMetalType(metal) {
-    const metalLower = metal.toLowerCase();
+    const metalLower = (metal || "").toLowerCase();
     if (metalLower.includes('rose')) return 'rose-gold';
     if (metalLower.includes('yellow')) return 'yellow-gold';
     if (metalLower.includes('white')) return 'white-gold';

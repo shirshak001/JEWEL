@@ -182,13 +182,36 @@ function initializeProductForm() {
 function addProduct(imageData, feedback) {
     const newProduct = {
         id: Date.now(),
-        name: document.getElementById("product-name").value,
-        price: parseFloat(document.getElementById("product-price").value),
+        title: document.getElementById("product-name").value,
+        slug: generateSlug(document.getElementById("product-name").value),
         description: document.getElementById("product-description").value,
+        price: parseFloat(document.getElementById("product-price").value),
+        sale_price: null,
+        categories: [],
+        tags: [],
+        images: imageData ? [{
+            url: imageData,
+            alt: document.getElementById("product-name").value,
+            is_primary: true
+        }] : [],
+        inventory: {
+            sku: generateSKU(),
+            stock_count: parseInt(document.getElementById("product-quantity").value)
+        },
+        attributes: [
+            { name: "metal", value: document.getElementById("product-metal").value },
+            { name: "gemstone", value: document.getElementById("product-gemstone").value || "" }
+        ],
+        active: true,
+        lowStockThreshold: parseInt(document.getElementById("product-low-stock").value),
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        
+        // Legacy fields for backward compatibility
+        name: document.getElementById("product-name").value,
         metal: document.getElementById("product-metal").value,
         gemstone: document.getElementById("product-gemstone").value || "",
         quantity: parseInt(document.getElementById("product-quantity").value),
-        lowStockThreshold: parseInt(document.getElementById("product-low-stock").value),
         image: imageData
     };
 
@@ -208,6 +231,22 @@ function addProduct(imageData, feedback) {
     }, 3000);
 }
 
+function generateSlug(title) {
+    return title
+        .toLowerCase()
+        .replace(/[^\w\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim();
+}
+
+function generateSKU() {
+    const prefix = "AMB";
+    const timestamp = Date.now().toString().slice(-8);
+    const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+    return `${prefix}-${timestamp}-${random}`;
+}
+
 // Edit product modal
 function initializeEditModal() {
     const modal = document.getElementById("edit-modal");
@@ -224,10 +263,24 @@ function initializeEditModal() {
         const product = products.find(p => p.id === id);
 
         if (product) {
-            product.name = document.getElementById("edit-product-name").value;
-            product.price = parseFloat(document.getElementById("edit-product-price").value);
-            product.quantity = parseInt(document.getElementById("edit-product-quantity").value);
-            product.description = document.getElementById("edit-product-description").value;
+            const newName = document.getElementById("edit-product-name").value;
+            const newPrice = parseFloat(document.getElementById("edit-product-price").value);
+            const newQuantity = parseInt(document.getElementById("edit-product-quantity").value);
+            const newDescription = document.getElementById("edit-product-description").value;
+            
+            // Update new model fields
+            product.title = newName;
+            product.slug = generateSlug(newName);
+            product.price = newPrice;
+            product.description = newDescription;
+            if (product.inventory) {
+                product.inventory.stock_count = newQuantity;
+            }
+            product.updatedAt = new Date().toISOString();
+            
+            // Update legacy fields for backward compatibility
+            product.name = newName;
+            product.quantity = newQuantity;
 
             saveProducts();
             renderInventory();
@@ -242,10 +295,10 @@ function editProduct(id) {
     if (!product) return;
 
     document.getElementById("edit-product-id").value = product.id;
-    document.getElementById("edit-product-name").value = product.name;
-    document.getElementById("edit-product-price").value = product.price;
-    document.getElementById("edit-product-quantity").value = product.quantity;
-    document.getElementById("edit-product-description").value = product.description;
+    document.getElementById("edit-product-name").value = product.title || product.name || "";
+    document.getElementById("edit-product-price").value = product.price || 0;
+    document.getElementById("edit-product-quantity").value = product.inventory?.stock_count ?? product.quantity ?? 0;
+    document.getElementById("edit-product-description").value = product.description || "";
 
     document.getElementById("edit-modal").classList.add("active");
 }
@@ -278,8 +331,12 @@ function initializeFilters() {
 // Alerts
 function renderAlerts() {
     const container = document.getElementById("alerts-container");
-    const lowStock = products.filter(p => p.quantity > 0 && p.quantity <= p.lowStockThreshold);
-    const outOfStock = products.filter(p => p.quantity === 0);
+    const lowStock = products.filter(p => {
+        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const threshold = p.lowStockThreshold ?? 3;
+        return stock > 0 && stock <= threshold;
+    });
+    const outOfStock = products.filter(p => (p.inventory?.stock_count ?? p.quantity ?? 0) === 0);
 
     const alerts = [
         ...outOfStock.map(p => ({
@@ -290,7 +347,7 @@ function renderAlerts() {
         ...lowStock.map(p => ({
             product: p,
             level: "warning",
-            message: `Only ${p.quantity} units remaining`
+            message: `Only ${p.inventory?.stock_count ?? p.quantity ?? 0} units remaining`
         }))
     ];
 
@@ -302,7 +359,7 @@ function renderAlerts() {
     container.innerHTML = alerts.map(alert => `
         <div class="alert-card ${alert.level}">
             <div class="alert-info">
-                <h4>${alert.product.name}</h4>
+                <h4>${alert.product.title || alert.product.name}</h4>
                 <p>${alert.message}</p>
             </div>
             <button class="btn-icon" onclick="editProduct(${alert.product.id})">Update Stock</button>
@@ -311,8 +368,12 @@ function renderAlerts() {
 }
 
 function updateAlertCount() {
-    const lowStock = products.filter(p => p.quantity > 0 && p.quantity <= p.lowStockThreshold);
-    const outOfStock = products.filter(p => p.quantity === 0);
+    const lowStock = products.filter(p => {
+        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const threshold = p.lowStockThreshold ?? 3;
+        return stock > 0 && stock <= threshold;
+    });
+    const outOfStock = products.filter(p => (p.inventory?.stock_count ?? p.quantity ?? 0) === 0);
     const count = lowStock.length + outOfStock.length;
     
     const badge = document.getElementById("alert-count");

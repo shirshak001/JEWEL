@@ -21,7 +21,10 @@ function loadHomepageProducts() {
     }
 
     const products = JSON.parse(stored);
-    const availableProducts = products.filter(p => p.quantity > 0).slice(0, 6); // Show max 6 on homepage
+    const availableProducts = products.filter(p => {
+        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        return stock > 0 && (p.active !== false);
+    }).slice(0, 6); // Show max 6 on homepage
 
     if (availableProducts.length === 0) {
         homepageGrid.innerHTML = `
@@ -33,41 +36,49 @@ function loadHomepageProducts() {
     }
 
     availableProducts.forEach(product => {
-        const isLowStock = product.quantity <= product.lowStockThreshold;
+        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const threshold = product.lowStockThreshold ?? 3;
+        const isLowStock = stock <= threshold;
         const stockWarning = isLowStock ? 
-            `<div class="stock-warning">Only ${product.quantity} left in stock</div>` : "";
+            `<div class="stock-warning">Only ${stock} left in stock</div>` : "";
 
         const category = categorizeProduct(product);
-        const metalType = determineMetalType(product.metal);
+        const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
+        const gemstone = product.attributes?.find(a => a.name === "gemstone")?.value || product.gemstone || "";
+        const metalType = determineMetalType(metal);
+        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const productName = product.title || product.name || "Untitled";
+        const productDescription = product.description || "";
+        const productPrice = product.price ?? 0;
 
         const card = document.createElement("article");
         card.className = "collection-card reveal";
         card.dataset.category = category;
         card.dataset.metal = metalType;
-        card.dataset.price = product.price;
+        card.dataset.price = productPrice;
         
         card.innerHTML = `
-            <div class="collection-card__media" style="${product.image ? `background-image: url(${product.image}); background-size: cover; background-position: center;` : ''}">
-                ${!product.image ? '<span style="color: var(--color-muted);">Image Coming Soon</span>' : ''}
+            <div class="collection-card__media" style="${primaryImage ? `background-image: url(${primaryImage}); background-size: cover; background-position: center;` : ''}">
+                ${!primaryImage ? '<span style="color: var(--color-muted);">Image Coming Soon</span>' : ''}
             </div>
             <div class="collection-card__body">
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
+                <h3>${productName}</h3>
+                <p>${productDescription}</p>
                 ${stockWarning}
                 <dl>
                     <div>
                         <dt>Metal</dt>
-                        <dd>${product.metal}</dd>
+                        <dd>${metal}</dd>
                     </div>
-                    ${product.gemstone ? `
+                    ${gemstone ? `
                     <div>
                         <dt>Gemstone</dt>
-                        <dd>${product.gemstone}</dd>
+                        <dd>${gemstone}</dd>
                     </div>
                     ` : ''}
                 </dl>
                 <div class="collection-card__footer">
-                    <span class="price">₹${product.price.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                    <span class="price">₹${productPrice.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
                     <a class="cta cta-small" href="collection.html">${isLowStock ? "Reserve Now" : "Shop Now"}</a>
                 </div>
             </div>
@@ -89,8 +100,11 @@ function loadCustomerProducts() {
 
     const products = JSON.parse(stored);
 
-    // Filter only products that are in stock or low stock (not out of stock)
-    const availableProducts = products.filter(p => p.quantity > 0);
+    // Filter only products that are in stock and active (not out of stock)
+    const availableProducts = products.filter(p => {
+        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        return stock > 0 && (p.active !== false);
+    });
 
     if (availableProducts.length === 0) {
         collectionGrid.innerHTML = `
@@ -103,7 +117,7 @@ function loadCustomerProducts() {
 
     // Determine category from product name or metal type
     const categorizeProduct = (product) => {
-        const name = product.name.toLowerCase();
+        const name = (product.title || product.name || "").toLowerCase();
         if (name.includes("ring")) return "rings";
         if (name.includes("earring")) return "earrings";
         if (name.includes("necklace")) return "necklaces";
@@ -113,7 +127,7 @@ function loadCustomerProducts() {
     };
 
     const determineMetalType = (metal) => {
-        const metalLower = metal.toLowerCase();
+        const metalLower = (metal || "").toLowerCase();
         if (metalLower.includes("rose")) return "rose-gold";
         if (metalLower.includes("yellow") || metalLower.includes("champagne")) return "yellow-gold";
         if (metalLower.includes("white")) return "white-gold";
@@ -122,41 +136,49 @@ function loadCustomerProducts() {
     };
 
     availableProducts.forEach(product => {
-        const isLowStock = product.quantity <= product.lowStockThreshold;
+        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const threshold = product.lowStockThreshold ?? 3;
+        const isLowStock = stock <= threshold;
         const stockWarning = isLowStock ? 
-            `<div class="stock-warning">Only ${product.quantity} left in stock</div>` : "";
+            `<div class="stock-warning">Only ${stock} left in stock</div>` : "";
 
         const category = categorizeProduct(product);
-        const metalType = determineMetalType(product.metal);
+        const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
+        const gemstone = product.attributes?.find(a => a.name === "gemstone")?.value || product.gemstone || "";
+        const metalType = determineMetalType(metal);
+        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const productName = product.title || product.name || "Untitled";
+        const productDescription = product.description || "";
+        const productPrice = product.price ?? 0;
 
         const card = document.createElement("article");
         card.className = "collection-card reveal";
         card.dataset.category = category;
         card.dataset.metal = metalType;
-        card.dataset.price = product.price;
+        card.dataset.price = productPrice;
         
         card.innerHTML = `
-            <div class="collection-card__media" style="${product.image ? `background-image: url(${product.image}); background-size: cover; background-position: center;` : ''}">
-                ${!product.image ? '<span style="color: var(--color-muted);">Image Coming Soon</span>' : ''}
+            <div class="collection-card__media" style="${primaryImage ? `background-image: url(${primaryImage}); background-size: cover; background-position: center;` : ''}">
+                ${!primaryImage ? '<span style="color: var(--color-muted);">Image Coming Soon</span>' : ''}
             </div>
             <div class="collection-card__body">
-                <h3>${product.name}</h3>
-                <p>${product.description}</p>
+                <h3>${productName}</h3>
+                <p>${productDescription}</p>
                 ${stockWarning}
                 <dl>
                     <div>
                         <dt>Metal</dt>
-                        <dd>${product.metal}</dd>
+                        <dd>${metal}</dd>
                     </div>
-                    ${product.gemstone ? `
+                    ${gemstone ? `
                     <div>
                         <dt>Gemstone</dt>
-                        <dd>${product.gemstone}</dd>
+                        <dd>${gemstone}</dd>
                     </div>
                     ` : ''}
                 </dl>
                 <div class="collection-card__footer">
-                    <span class="price">₹${product.price.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
+                    <span class="price">₹${productPrice.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
                     <a class="text-link" href="#contact">${isLowStock ? "Reserve Now" : "View Details"}</a>
                 </div>
             </div>
