@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Complete your purchase securely with our streamlined checkout process.">
+    <title>Checkout - SoilBuddy Atelier</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <a class="brand" href="index.html" aria-label="SoilBuddy Atelier home">
+                    <span class="brand-mark">SoilBuddy</span>
+                    <span class="brand-submark">Atelier</span>
+                </a>
+                
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="collection.html" class="nav-link">Shop</a></li>
+                        <li><a href="index.html#about" class="nav-link">About</a></li>
+                        <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-actions">
+                        <button class="cart-btn" id="cart-toggle" aria-label="Shopping cart">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="cart-count" id="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="checkout-page">
+        <div class="checkout-container">
+            <div class="checkout-progress">
+                <div class="progress-step active">
+                    <span class="step-number">1</span>
+                    <span class="step-label">Information</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">2</span>
+                    <span class="step-label">Payment</span>
+                </div>
+                <div class="progress-step">
+                    <span class="step-number">3</span>
+                    <span class="step-label">Confirmation</span>
+                </div>
+            </div>
+
+            <div class="checkout-content">
+                <div class="checkout-main">
+                    <section class="checkout-section" id="customer-info-section">
+                        <h2>Contact Information</h2>
+                        <form id="checkout-form" novalidate>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customer-email">Email *</label>
+                                    <input type="email" id="customer-email" name="email" required placeholder="you@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-phone">Phone Number *</label>
+                                    <input type="tel" id="customer-phone" name="phone" required placeholder="+91 98765 43210">
+                                </div>
+                            </div>
+
+                            <h3>Shipping Address</h3>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customer-firstname">First Name *</label>
+                                    <input type="text" id="customer-firstname" name="firstname" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-lastname">Last Name *</label>
+                                    <input type="text" id="customer-lastname" name="lastname" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customer-address">Address *</label>
+                                <input type="text" id="customer-address" name="address" required placeholder="Street address">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="customer-apartment">Apartment, suite, etc. (optional)</label>
+                                <input type="text" id="customer-apartment" name="apartment">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customer-city">City *</label>
+                                    <input type="text" id="customer-city" name="city" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-state">State *</label>
+                                    <input type="text" id="customer-state" name="state" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="customer-pincode">PIN Code *</label>
+                                    <input type="text" id="customer-pincode" name="pincode" required pattern="[0-9]{6}" placeholder="400001">
+                                </div>
+                                <div class="form-group">
+                                    <label for="customer-country">Country</label>
+                                    <input type="text" id="customer-country" name="country" value="India" readonly>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <a href="collection.html" class="btn-secondary">Return to Shop</a>
+                                <button type="submit" class="btn-primary">Continue to Payment</button>
+                            </div>
+                        </form>
+                    </section>
+
+                    <section class="checkout-section hidden" id="payment-section">
+                        <h2>Payment Method</h2>
+                        <div class="payment-methods">
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="card" checked>
+                                <div class="payment-card">
+                                    <span class="payment-title">Credit / Debit Card</span>
+                                    <span class="payment-desc">Secure payment via Visa, Mastercard, Amex</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="upi">
+                                <div class="payment-card">
+                                    <span class="payment-title">UPI</span>
+                                    <span class="payment-desc">Pay via Google Pay, PhonePe, Paytm</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="netbanking">
+                                <div class="payment-card">
+                                    <span class="payment-title">Net Banking</span>
+                                    <span class="payment-desc">Direct bank transfer</span>
+                                </div>
+                            </label>
+                            <label class="payment-option">
+                                <input type="radio" name="payment" value="cod">
+                                <div class="payment-card">
+                                    <span class="payment-title">Cash on Delivery</span>
+                                    <span class="payment-desc">Pay when you receive</span>
+                                </div>
+                            </label>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn-secondary" id="back-to-info">Back</button>
+                            <button type="button" class="btn-primary" id="place-order">Place Order</button>
+                        </div>
+                    </section>
+
+                    <section class="checkout-section hidden" id="confirmation-section">
+                        <div class="order-confirmation">
+                            <div class="confirmation-icon">✓</div>
+                            <h2>Order Confirmed!</h2>
+                            <p>Thank you for your purchase. Your order has been received.</p>
+                            <div class="order-details">
+                                <p><strong>Order Number:</strong> <span id="order-number"></span></p>
+                                <p><strong>Confirmation sent to:</strong> <span id="confirmation-email"></span></p>
+                            </div>
+                            <div class="form-actions">
+                                <a href="collection.html" class="btn-secondary">Continue Shopping</a>
+                                <a href="index.html" class="btn-primary">Back to Home</a>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <aside class="checkout-sidebar">
+                    <div class="order-summary">
+                        <h3>Order Summary</h3>
+                        <div class="summary-items" id="summary-items">
+                            <!-- Cart items will be displayed here -->
+                        </div>
+                        <div class="summary-totals">
+                            <div class="summary-row">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal">₹0</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Shipping</span>
+                                <span id="summary-shipping">Free</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>Tax (GST 3%)</span>
+                                <span id="summary-tax">₹0</span>
+                            </div>
+                            <div class="summary-row total">
+                                <span>Total</span>
+                                <span id="summary-total">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <button class="back-to-top" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <script src="assets/js/checkout.js" defer></script>
+    <script src="assets/js/cart.js" defer></script>
+</body>
+</html>

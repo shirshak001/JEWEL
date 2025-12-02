@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Premium jewellery house crafting hand-finished pieces with sustainable materials and bespoke artistry.">
+    <title>SoilBuddy Atelier</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header class="site-header" id="top">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <a class="brand" href="index.html" aria-label="SoilBuddy Atelier home">
+                    <span class="brand-mark">SoilBuddy</span>
+                    <span class="brand-submark">Atelier</span>
+                </a>
+                
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="#top" class="nav-link">Home</a></li>
+                        <li><a href="collection.html" class="nav-link">Shop</a></li>
+                        <li><a href="#about" class="nav-link">About</a></li>
+                        <li><a href="#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-actions">
+                        <button class="cart-btn" id="cart-toggle" aria-label="Shopping cart">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="cart-count" id="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <section class="hero">
+            <div class="hero-copy reveal">
+                <span class="hero-eyebrow">Limited Edition Drop</span>
+                <h1>Hand-Finished Jewellery for Modern Heirlooms</h1>
+                <p>Experience luminous metals and ethically sourced gemstones, refined through heritage techniques and contemporary design.</p>
+                <div class="hero-actions">
+                    <a class="cta" href="collection.html">Shop Now</a>
+                </div>
+            </div>
+            <div class="hero-visual reveal" aria-hidden="true">
+                <div class="hero-orb"></div>
+                <div class="hero-card">
+                    <span class="card-label">Featured: Solstice Ensemble</span>
+                    <p>Hand-brushed 18k gold paired with champagne diamonds, balanced for everyday radiance.</p>
+                    <span class="card-price">₹205,000</span>
+                    <a class="cta hero-card-cta" href="collection.html">View Collection</a>
+                </div>
+            </div>
+        </section>
+    </header>
+
+    <main>
+        <section id="collections" class="section collections">
+            <div class="section-heading reveal">
+                <span class="eyebrow">Signature Pieces</span>
+                <h2>Curated Collections</h2>
+                <p>Each piece is designed in-house and finished by artisans who balance precision with soul.</p>
+            </div>
+            
+            <div class="collection-cta reveal">
+                <a class="cta" href="collection.html">View Full Collection</a>
+            </div>
+            
+            <div class="collection-grid" aria-live="polite">
+                <article class="collection-card reveal" data-category="rings" data-metal="rose-gold" data-price="165000">
+                    <div class="collection-card__media" data-placeholder="Replace with Aurora Crown Ring image"></div>
+                    <div class="collection-card__body">
+                        <h3>Aurora Crown Ring</h3>
+                        <p>Scalloped setting with oval-cut morganite and a micro pav&eacute; crown.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>18k Rose Gold</dd>
+                            </div>
+                            <div>
+                                <dt>Gemstone</dt>
+                                <dd>Morganite, White Diamond Halo</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹1,65,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="collection-card reveal" data-category="earrings" data-metal="yellow-gold" data-price="52000">
+                    <div class="collection-card__media" data-placeholder="Replace with Lumen Drop Earrings image"></div>
+                    <div class="collection-card__body">
+                        <h3>Lumen Drop Earrings</h3>
+                        <p>Hand-hammered discs suspended from delicate chains for a liquid light effect.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>14k Champagne Gold</dd>
+                            </div>
+                            <div>
+                                <dt>Finish</dt>
+                                <dd>Mirror Polished Inner Disc</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹52,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="collection-card reveal" data-category="bracelets" data-metal="platinum" data-price="263000">
+                    <div class="collection-card__media" data-placeholder="Replace with Meridian Cuff image"></div>
+                    <div class="collection-card__body">
+                        <h3>Meridian Cuff</h3>
+                        <p>Architectural cuff with tension-set baguette diamond and satin-brushed edges.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>Recycled Platinum</dd>
+                            </div>
+                            <div>
+                                <dt>Detail</dt>
+                                <dd>Hand-Carved Inner Pattern</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹2,63,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="collection-card reveal" data-category="necklaces" data-metal="yellow-gold" data-price="232000">
+                    <div class="collection-card__media" data-placeholder="Replace with Elysian Necklace image"></div>
+                    <div class="collection-card__body">
+                        <h3>Elysian Necklace</h3>
+                        <p>Floating pear-cut sapphire with tapered chain inspired by vintage lariats.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>Fairmined Yellow Gold</dd>
+                            </div>
+                            <div>
+                                <dt>Gemstone</dt>
+                                <dd>Teal Australian Sapphire</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹2,32,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="collection-card reveal" data-category="bracelets" data-metal="white-gold" data-price="110000">
+                    <div class="collection-card__media" data-placeholder="Replace with Celeste Bracelet image"></div>
+                    <div class="collection-card__body">
+                        <h3>Celeste Bracelet</h3>
+                        <p>Interlocking links with hand-set salt and pepper diamonds for subtle dimension.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>White Gold, Rhodium Finish</dd>
+                            </div>
+                            <div>
+                                <dt>Feature</dt>
+                                <dd>Customizable Link Length</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹1,10,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="collection-card reveal" data-category="bands" data-metal="white-gold" data-price="82000">
+                    <div class="collection-card__media" data-placeholder="Replace with Horizon Band image"></div>
+                    <div class="collection-card__body">
+                        <h3>Horizon Band</h3>
+                        <p>Polished dome band with offset inset diamonds celebrating understated luxury.</p>
+                        <dl>
+                            <div>
+                                <dt>Metal</dt>
+                                <dd>18k White Gold</dd>
+                            </div>
+                            <div>
+                                <dt>Profile</dt>
+                                <dd>Comfort Fit Interior</dd>
+                            </div>
+                        </dl>
+                        <div class="collection-card__footer">
+                            <span class="price">₹82,000</span>
+                            <a class="cta cta-small" href="collection.html">Shop Now</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <section id="about" class="section about">
+            <div class="about-inner">
+                <div class="about-story reveal">
+                    <span class="eyebrow">Why Choose Us</span>
+                    <h2>Premium Quality Guaranteed</h2>
+                    <p>SoilBuddy Atelier offers handcrafted jewellery with authenticity certification and lifetime warranty on every piece.</p>
+                    <a class="cta cta-with-margin" href="collection.html">Shop Collection</a>
+                </div>
+                <div class="about-highlights reveal">
+                    <div class="about-highlight">
+                        <h3>01. Certified Authenticity</h3>
+                        <p>Every piece comes with official certification and quality assurance documentation.</p>
+                    </div>
+                    <div class="about-highlight">
+                        <h3>02. Secure Payment</h3>
+                        <p>Multiple payment options including UPI, cards, net banking, and cash on delivery.</p>
+                    </div>
+                    <div class="about-highlight">
+                        <h3>03. Free Shipping</h3>
+                        <p>Complimentary insured delivery on all orders with signature confirmation.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="contact" class="section contact">
+            <div class="contact-grid">
+                <div class="contact-details reveal">
+                    <span class="eyebrow">Get in Touch</span>
+                    <h2>Contact Us</h2>
+                    <p>Have questions? Our team is here to help you find the perfect piece.</p>
+                    <ul class="contact-list">
+                        <li><span>Phone</span> +91 98765 43210</li>
+                        <li><span>Email</span> support@soilbuddyatelier.com</li>
+                    </ul>
+                    <a class="cta cta-with-margin" href="collection.html">Start Shopping</a>
+                </div>
+
+                <div class="contact-form reveal">
+                    <form id="consultation-form" novalidate>
+                        <fieldset>
+                            <legend>Send us a Message</legend>
+                            <label for="full-name">Full Name</label>
+                            <input id="full-name" name="full-name" type="text" required placeholder="Your Name">
+
+                            <label for="email">Email</label>
+                            <input id="email" name="email" type="email" required placeholder="name@example.com">
+
+                            <label for="phone">Phone</label>
+                            <input id="phone" name="phone" type="tel" placeholder="Optional">
+
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" rows="4" placeholder="How can we help you?" required></textarea>
+                        </fieldset>
+                        <button type="submit" class="cta">Send Message</button>
+                        <p class="form-feedback" role="status" aria-live="polite"></p>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>&copy; <span id="current-year"></span> SoilBuddy Atelier. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <button class="cart-close" id="cart-close" aria-label="Close cart">×</button>
+        </div>
+        <div class="cart-body" id="cart-items">
+            <div class="cart-empty">
+                <p>Your cart is empty</p>
+                <a href="collection.html" class="btn-continue">Continue Shopping</a>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span class="cart-total" id="cart-total">₹0</span>
+            </div>
+            <a href="checkout.html" class="btn-checkout">Proceed to Checkout</a>
+            <button class="btn-continue-shopping" id="continue-shopping">Continue Shopping</button>
+        </div>
+    </aside>
+
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <button class="back-to-top" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/customer-inventory.js" defer></script>
+</body>
+</html>

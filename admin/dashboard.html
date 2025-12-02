@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory Dashboard - SoilBuddy Atelier</title>
+    <link rel="stylesheet" href="../assets/css/admin.css">
+</head>
+<body class="dashboard-page">
+    <aside class="sidebar">
+        <div class="sidebar-brand">
+            <span class="brand-mark">SoilBuddy</span>
+            <span class="brand-submark">Admin</span>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#inventory" class="nav-item active">
+                <span class="nav-icon">INV</span>
+                <span>Inventory</span>
+            </a>
+            <a href="#add-product" class="nav-item">
+                <span class="nav-icon">ADD</span>
+                <span>Add Product</span>
+            </a>
+            <a href="#warnings" class="nav-item">
+                <span class="nav-icon">ALT</span>
+                <span>Stock Alerts</span>
+                <span class="badge" id="alert-count">0</span>
+            </a>
+            <a href="#settings" class="nav-item">
+                <span class="nav-icon">SET</span>
+                <span>Settings</span>
+            </a>
+        </nav>
+        <button class="btn-logout" id="logout-btn">Logout</button>
+    </aside>
+
+    <main class="dashboard-main">
+        <header class="dashboard-header">
+            <h1>Inventory Management</h1>
+            <div class="header-actions">
+                <span class="admin-name" id="admin-name">Admin User</span>
+            </div>
+        </header>
+
+        <section id="inventory-section" class="dashboard-section active">
+            <div class="section-header">
+                <h2>Current Inventory</h2>
+                <div class="filter-controls">
+                    <label for="stock-filter" class="sr-only">Filter by stock status</label>
+                    <select id="stock-filter" aria-label="Filter by stock status">
+                        <option value="all">All Items</option>
+                        <option value="low">Low Stock</option>
+                        <option value="out">Out of Stock</option>
+                        <option value="available">Available</option>
+                    </select>
+                    <input type="search" id="search-products" placeholder="Search products..." aria-label="Search products">
+                </div>
+            </div>
+
+            <div class="inventory-grid" id="inventory-grid">
+                <!-- Products will be loaded here dynamically -->
+            </div>
+        </section>
+
+        <section id="add-product-section" class="dashboard-section">
+            <div class="section-header">
+                <h2>Add New Product</h2>
+            </div>
+
+            <form id="add-product-form" class="product-form" novalidate>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-name">Product Name *</label>
+                        <input type="text" id="product-name" name="name" required placeholder="e.g., Aurora Crown Ring">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-price">Price (₹) *</label>
+                        <input type="number" id="product-price" name="price" required min="0" step="0.01" placeholder="149000">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-description">Description *</label>
+                    <textarea id="product-description" name="description" required rows="3" placeholder="Brief description of the piece"></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-metal">Metal *</label>
+                        <input type="text" id="product-metal" name="metal" required placeholder="e.g., 18k Rose Gold">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-gemstone">Gemstone</label>
+                        <input type="text" id="product-gemstone" name="gemstone" placeholder="e.g., Morganite">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="product-quantity">Initial Stock Quantity *</label>
+                        <input type="number" id="product-quantity" name="quantity" required min="0" placeholder="10">
+                    </div>
+                    <div class="form-group">
+                        <label for="product-low-stock">Low Stock Threshold *</label>
+                        <input type="number" id="product-low-stock" name="lowStockThreshold" required min="1" value="3" placeholder="3">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="product-image">Product Image *</label>
+                    <input type="file" id="product-image" name="image" accept="image/*" required>
+                    <div class="image-preview" id="image-preview"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Add Product</button>
+                    <button type="reset" class="btn-secondary">Clear Form</button>
+                </div>
+                <p class="form-feedback" role="status" aria-live="polite"></p>
+            </form>
+        </section>
+
+        <section id="warnings-section" class="dashboard-section">
+            <div class="section-header">
+                <h2>Stock Alerts</h2>
+            </div>
+            <div class="alerts-container" id="alerts-container">
+                <!-- Alerts will be loaded here dynamically -->
+            </div>
+        </section>
+
+        <section id="settings-section" class="dashboard-section">
+            <div class="section-header">
+                <h2>Settings</h2>
+            </div>
+            <div class="settings-form">
+                <div class="form-group">
+                    <label for="global-low-stock">Global Low Stock Threshold</label>
+                    <input type="number" id="global-low-stock" value="3" min="1">
+                    <p class="help-text">Default threshold for new products</p>
+                </div>
+                <div class="form-group">
+                    <label for="admin-email-settings">Admin Email</label>
+                    <input type="email" id="admin-email-settings" placeholder="admin@soilbuddy.com">
+                </div>
+                <button class="btn-primary" id="save-settings">Save Settings</button>
+            </div>
+        </section>
+    </main>
+
+    <div id="edit-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Product</h3>
+                <button class="modal-close" id="close-modal">&times;</button>
+            </div>
+            <form id="edit-product-form" class="product-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="form-group">
+                    <label for="edit-product-name">Product Name</label>
+                    <input type="text" id="edit-product-name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-price">Price (₹)</label>
+                    <input type="number" id="edit-product-price" name="price" required step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-quantity">Stock Quantity</label>
+                    <input type="number" id="edit-product-quantity" name="quantity" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-description">Description</label>
+                    <textarea id="edit-product-description" name="description" rows="3"></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn-primary">Update Product</button>
+                    <button type="button" class="btn-secondary" id="cancel-edit">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="../assets/js/admin-dashboard.js"></script>
+</body>
+</html>

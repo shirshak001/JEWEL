@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browse our curated collection of premium handcrafted jewellery. Shop rings, necklaces, earrings, and more.">
+    <title>Shop Collection - SoilBuddy Atelier</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <a class="brand" href="index.html" aria-label="SoilBuddy Atelier home">
+                    <span class="brand-mark">SoilBuddy</span>
+                    <span class="brand-submark">Atelier</span>
+                </a>
+                
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="collection.html" class="nav-link active">Shop</a></li>
+                        <li><a href="index.html#about" class="nav-link">About</a></li>
+                        <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-actions">
+                        <button class="cart-btn" id="cart-toggle" aria-label="Shopping cart">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="cart-count" id="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="shop-page">
+        <section class="page-header">
+            <div class="page-header-content">
+                <h1>Luxury Jewellery Collection</h1>
+                <p>Handcrafted pieces designed to last generations</p>
+            </div>
+        </section>
+
+        <section class="collection-section">
+            <div class="collection-container">
+                <aside class="collection-sidebar">
+                    <div class="filter-section">
+                        <h3>Filter By</h3>
+                        
+                        <div class="filter-block">
+                            <h4>Category</h4>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="all" checked>
+                                    <span>All Items</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="rings">
+                                    <span>Rings</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="earrings">
+                                    <span>Earrings</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="necklaces">
+                                    <span>Necklaces</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="bracelets">
+                                    <span>Bracelets</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="category" value="bands">
+                                    <span>Bands</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="filter-block">
+                            <h4>Metal Type</h4>
+                            <div class="filter-options">
+                                <label class="filter-option">
+                                    <input type="checkbox" name="metal" value="rose-gold">
+                                    <span>Rose Gold</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="metal" value="yellow-gold">
+                                    <span>Yellow Gold</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="metal" value="white-gold">
+                                    <span>White Gold</span>
+                                </label>
+                                <label class="filter-option">
+                                    <input type="checkbox" name="metal" value="platinum">
+                                    <span>Platinum</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="filter-block">
+                            <h4>Price Range</h4>
+                            <div class="price-range">
+                                <label for="price-slider" class="sr-only">Maximum price filter</label>
+                                <input type="range" id="price-slider" min="0" max="500000" value="500000" step="10000" aria-label="Maximum price filter">
+                                <div class="price-display">
+                                    <span>Up to ₹<span id="price-value">5,00,000</span></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn-reset-filters" id="reset-filters">Reset All Filters</button>
+                    </div>
+                </aside>
+
+                <div class="collection-main">
+                    <div class="collection-toolbar">
+                        <div class="results-info">
+                            <p class="results-count" id="results-count">Showing all products</p>
+                        </div>
+                        <div class="sort-controls">
+                            <label for="sort-select">Sort by:</label>
+                            <select id="sort-select" class="sort-select">
+                                <option value="featured">Featured</option>
+                                <option value="price-low">Price: Low to High</option>
+                                <option value="price-high">Price: High to Low</option>
+                                <option value="name">Name: A to Z</option>
+                                <option value="newest">Newest First</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="products-grid" id="products-grid">
+                        <!-- Products will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2>Shopping Cart</h2>
+            <button class="cart-close" id="cart-close" aria-label="Close cart">×</button>
+        </div>
+        <div class="cart-body" id="cart-items">
+            <div class="cart-empty">
+                <p>Your cart is empty</p>
+                <a href="collection.html" class="btn-continue">Continue Shopping</a>
+            </div>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-subtotal">
+                <span>Subtotal:</span>
+                <span class="cart-total" id="cart-total">₹0</span>
+            </div>
+            <a href="checkout.html" class="btn-checkout">Proceed to Checkout</a>
+            <button class="btn-continue-shopping" id="continue-shopping">Continue Shopping</button>
+        </div>
+    </aside>
+
+    <div class="cart-overlay" id="cart-overlay"></div>
+
+    <button class="back-to-top" aria-label="Back to top">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="18 15 12 9 6 15"></polyline>
+        </svg>
+    </button>
+
+    <footer class="site-footer compact">
+        <div class="footer-content">
+            <p>&copy; <span id="current-year"></span> SoilBuddy Atelier. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="index.html#contact">Contact</a>
+                <a href="index.html#about">About</a>
+            </div>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/collection.js" defer></script>
+</body>
+</html>
