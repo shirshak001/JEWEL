@@ -81,32 +81,8 @@ function loadProducts() {
     if (stored) {
         products = JSON.parse(stored);
     } else {
-        // Initialize with sample data
-        products = [
-            {
-                id: Date.now() + 1,
-                name: "Aurora Crown Ring",
-                price: 165000,
-                description: "Scalloped setting with oval-cut morganite and a micro pavé crown.",
-                metal: "18k Rose Gold",
-                gemstone: "Morganite, White Diamond Halo",
-                quantity: 5,
-                lowStockThreshold: 3,
-                image: ""
-            },
-            {
-                id: Date.now() + 2,
-                name: "Lumen Drop Earrings",
-                price: 52000,
-                description: "Hand-hammered discs suspended from delicate chains.",
-                metal: "14k Champagne Gold",
-                gemstone: "",
-                quantity: 2,
-                lowStockThreshold: 3,
-                image: ""
-            }
-        ];
-        saveProducts();
+        // Initialize with empty inventory
+        products = [];
     }
     renderInventory();
     renderAlerts();
