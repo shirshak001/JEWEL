@@ -10,7 +10,7 @@ function loadProducts() {
     if (!productsGrid) return;
 
     // Load products from localStorage
-    const products = JSON.parse(localStorage.getItem('soilbuddyProducts') || '[]');
+    const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
 
     // Filter out-of-stock items
     const availableProducts = products.filter(p => p.quantity > 0);
@@ -82,7 +82,7 @@ function attachAddToCartListeners() {
     document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
         btn.addEventListener('click', (e) => {
             const productId = parseInt(e.target.dataset.id);
-            const products = JSON.parse(localStorage.getItem('soilbuddyProducts') || '[]');
+            const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
             const product = products.find(p => p.id === productId);
             
             if (product && window.ShoppingCart) {

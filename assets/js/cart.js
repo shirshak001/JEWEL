@@ -6,12 +6,12 @@ class ShoppingCart {
     }
 
     loadCart() {
-        const saved = localStorage.getItem('soilbuddyCart');
+        const saved = localStorage.getItem('amberCart');
         return saved ? JSON.parse(saved) : [];
     }
 
     saveCart() {
-        localStorage.setItem('soilbuddyCart', JSON.stringify(this.items));
+        localStorage.setItem('amberCart', JSON.stringify(this.items));
         this.updateCartUI();
     }
 

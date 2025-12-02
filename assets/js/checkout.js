@@ -1,6 +1,6 @@
 // Checkout Page Functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const cart = JSON.parse(localStorage.getItem('soilbuddyCart') || '[]');
+    const cart = JSON.parse(localStorage.getItem('amberCart') || '[]');
     
     if (cart.length === 0) {
         window.location.href = 'collection.html';
@@ -157,7 +157,7 @@ function updateProgress(step) {
 
 function processOrder(paymentMethod) {
     // Generate order number
-    const orderNumber = 'SB' + Date.now().toString().slice(-8);
+    const orderNumber = 'AMB' + Date.now().toString().slice(-8);
     const customerInfo = JSON.parse(localStorage.getItem('customerInfo') || '{}');
 
     // Save order details
@@ -165,20 +165,20 @@ function processOrder(paymentMethod) {
         orderNumber,
         date: new Date().toISOString(),
         customerInfo,
-        items: JSON.parse(localStorage.getItem('soilbuddyCart') || '[]'),
+        items: JSON.parse(localStorage.getItem('amberCart') || '[]'),
         paymentMethod,
         status: 'confirmed'
     };
 
-    const orders = JSON.parse(localStorage.getItem('soilbuddyOrders') || '[]');
+    const orders = JSON.parse(localStorage.getItem('amberOrders') || '[]');
     orders.push(order);
-    localStorage.setItem('soilbuddyOrders', JSON.stringify(orders));
+    localStorage.setItem('amberOrders', JSON.stringify(orders));
 
     // Update product quantities
     updateInventory(order.items);
 
     // Clear cart
-    localStorage.removeItem('soilbuddyCart');
+    localStorage.removeItem('amberCart');
 
     // Show confirmation
     document.getElementById('order-number').textContent = orderNumber;
@@ -194,7 +194,7 @@ function processOrder(paymentMethod) {
 }
 
 function updateInventory(orderItems) {
-    const products = JSON.parse(localStorage.getItem('soilbuddyProducts') || '[]');
+    const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
 
     orderItems.forEach(orderItem => {
         const product = products.find(p => p.id === orderItem.id);
@@ -203,5 +203,5 @@ function updateInventory(orderItems) {
         }
     });
 
-    localStorage.setItem('soilbuddyProducts', JSON.stringify(products));
+    localStorage.setItem('amberProducts', JSON.stringify(products));
 }

@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 function loadCustomerProducts() {
-    const stored = localStorage.getItem("soilbuddyProducts");
+    const stored = localStorage.getItem("amberProducts");
     if (!stored) return;
 
     const products = JSON.parse(stored);

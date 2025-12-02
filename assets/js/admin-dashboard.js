@@ -47,7 +47,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("logout-btn").addEventListener("click", () => {
         if (confirm("Are you sure you want to logout?")) {
             localStorage.removeItem("adminAuth");
-            localStorage.removeItem("soilbuddyProducts");
+            localStorage.removeItem("amberProducts");
             window.location.href = "login.html";
         }
     });
@@ -77,7 +77,7 @@ function initializeNavigation() {
 
 // Load products from localStorage
 function loadProducts() {
-    const stored = localStorage.getItem("soilbuddyProducts");
+    const stored = localStorage.getItem("amberProducts");
     if (stored) {
         products = JSON.parse(stored);
     } else {
@@ -113,7 +113,7 @@ function loadProducts() {
 }
 
 function saveProducts() {
-    localStorage.setItem("soilbuddyProducts", JSON.stringify(products));
+    localStorage.setItem("amberProducts", JSON.stringify(products));
     updateAlertCount();
 }
 
