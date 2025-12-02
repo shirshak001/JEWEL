@@ -159,17 +159,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Manage resize state for mobile nav to avoid stuck layout when resizing
     window.addEventListener("resize", () => {
-        if (!navBar || !navToggle) return;
-        if (window.innerWidth > 900) {
+        if (!navToggle || !navMenu) return;
+        if (window.innerWidth > 968) {
             navToggle.setAttribute("aria-expanded", "false");
-            navBar.classList.remove("nav-open");
         }
     });
-
-    window.addEventListener("scroll", () => {
-        updateNavScrollState();
-        updateBackToTop();
-    }, { passive: true });
 
     // Collection filtering functionality
     initializeCollectionFilters();
