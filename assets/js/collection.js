@@ -27,7 +27,17 @@ async function fetchAndLoadCollectionProducts() {
         }
 
         const data = await response.json();
-        const products = data.products || data || [];
+        console.log('API Response:', data);
+        
+        // Handle different response formats
+        let products = [];
+        if (Array.isArray(data)) {
+            products = data;
+        } else if (data.products && Array.isArray(data.products)) {
+            products = data.products;
+        } else if (data.data && Array.isArray(data.data)) {
+            products = data.data;
+        }
         
         console.log('Products loaded:', products.length);
         
