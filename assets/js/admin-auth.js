@@ -3,7 +3,7 @@ const AUTH_CONFIG = {
     users: [
         {
             email: "shirshakmondaljspbuet@gmail.com",
-            passwordHash: "569e8ddd484a4bd3f547ffc342a9ff212fe74717ca19796c9b66a47c2597690c", // Mondal@2003
+            passwordHash: "569e8ddd484a4bd3f547ffc342a9ff212fe74717ca19796c9b66a47c2597690c",
             role: "admin"
         }
     ],

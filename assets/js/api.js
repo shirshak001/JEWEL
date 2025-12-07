@@ -358,8 +358,7 @@ const API = {
         const { email, password } = credentials;
         
         // Hardcoded admin credentials (should be in backend in production)
-        const ADMIN_EMAIL = 'shirshakmondaljspbuet@gmail.com';
-        const ADMIN_PASSWORD = 'Mondal@2003';
+        // Admin credentials are now managed through backend authentication
         
         if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
             const authData = {

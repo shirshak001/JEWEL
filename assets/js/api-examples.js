@@ -58,8 +58,8 @@ async function exampleGetCategories() {
 async function exampleLogin() {
     try {
         const response = await AmberAPI.login({
-            email: 'shirshakmondaljspbuet@gmail.com',
-            password: 'Mondal@2003'
+            email: 'your-admin@email.com',
+            password: 'your-password'
         });
         
         console.log('Login successful:', response);
