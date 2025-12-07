@@ -2083,6 +2083,41 @@ textarea:focus-visible {
         flex-direction: column;
         gap: 1rem;
     }
+
+    /* Fix hero section for mobile */
+    .hero {
+        flex-direction: column;
+        gap: 2rem;
+        padding-bottom: 2rem;
+    }
+
+    .hero-content {
+        max-width: 100%;
+    }
+
+    .hero-content h1 {
+        font-size: 2rem;
+    }
+
+    .hero-visual {
+        position: relative;
+        min-height: 20rem;
+        margin-top: 2rem;
+    }
+
+    .hero-card {
+        position: relative;
+        right: auto;
+        bottom: auto;
+        width: 100%;
+        max-width: 24rem;
+        margin: 0 auto;
+    }
+
+    .hero-orb {
+        inset: 0;
+        opacity: 0.5;
+    }
 }
 
 @media (max-width: 600px) {
@@ -2109,6 +2144,28 @@ textarea:focus-visible {
 
     .cart-drawer {
         width: 100vw;
+    }
+
+    /* Further mobile optimization */
+    .hero-content h1 {
+        font-size: 1.75rem;
+        line-height: 1.2;
+    }
+
+    .hero-content p {
+        font-size: 0.9rem;
+    }
+
+    .hero-card {
+        padding: 1.25rem;
+    }
+
+    .hero-card .card-price {
+        font-size: 1.2rem;
+    }
+
+    .collection-grid {
+        grid-template-columns: 1fr;
     }
 }
 
