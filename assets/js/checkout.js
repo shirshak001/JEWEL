@@ -145,26 +145,46 @@ function setupProgressFlow() {
     }
 
     if (placeOrderBtn) {
-        placeOrderBtn.addEventListener('click', async () => {
-            const selectedPayment = document.querySelector('input[name="payment"]:checked');
-            if (!selectedPayment) {
-                alert('Please select a payment method');
-                return;
-            }
+        placeOrderBtn.addEventListener('click', async (e) => {
+            e.preventDefault();
+            
+            // Prevent double-clicks
+            if (placeOrderBtn.disabled) return;
+            placeOrderBtn.disabled = true;
+            placeOrderBtn.textContent = 'Processing...';
+            
+            try {
+                const selectedPayment = document.querySelector('input[name="payment"]:checked');
+                if (!selectedPayment) {
+                    alert('Please select a payment method');
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.textContent = 'Place Order';
+                    return;
+                }
 
-            const paymentMethod = selectedPayment.value;
-            
-            // If Cash on Delivery, process directly
-            if (paymentMethod === 'cod') {
-                processOrder(paymentMethod);
-                return;
-            }
-            
-            // For online payments (Razorpay/Stripe)
-            if (paymentMethod === 'razorpay' || paymentMethod === 'online') {
-                await processOnlinePayment();
-            } else {
-                processOrder(paymentMethod);
+                const paymentMethod = selectedPayment.value;
+                console.log('Selected payment method:', paymentMethod);
+                
+                // If Cash on Delivery, process directly
+                if (paymentMethod === 'cod') {
+                    await processOrder(paymentMethod);
+                    placeOrderBtn.disabled = false;
+                    placeOrderBtn.textContent = 'Place Order';
+                    return;
+                }
+                
+                // For all online payments (card, upi, netbanking)
+                if (paymentMethod === 'card' || paymentMethod === 'upi' || paymentMethod === 'netbanking') {
+                    await processOnlinePayment();
+                } else {
+                    await processOrder(paymentMethod);
+                }
+            } catch (error) {
+                console.error('Order processing error:', error);
+                alert('Failed to process order. Please try again.');
+            } finally {
+                placeOrderBtn.disabled = false;
+                placeOrderBtn.textContent = 'Place Order';
             }
         });
     }
