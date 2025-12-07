@@ -10,6 +10,8 @@ async function fetchAndLoadProducts() {
         // Get API URL from config
         const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
         
+        console.log('Fetching products from:', `${API_URL}/api/products`);
+        
         // Fetch products from backend
         const response = await fetch(`${API_URL}/api/products`, {
             method: 'GET',
@@ -23,7 +25,19 @@ async function fetchAndLoadProducts() {
         }
 
         const data = await response.json();
-        const products = data.products || data || [];
+        console.log('API Response:', data);
+        
+        // Handle different response formats
+        let products = [];
+        if (Array.isArray(data)) {
+            products = data;
+        } else if (data.products && Array.isArray(data.products)) {
+            products = data.products;
+        } else if (data.data && Array.isArray(data.data)) {
+            products = data.data;
+        }
+        
+        console.log('Parsed products:', products.length);
         
         // Store in localStorage for offline access
         if (products.length > 0) {
@@ -46,6 +60,26 @@ async function fetchAndLoadProducts() {
             showNoProductsMessage();
         }
     }
+}
+
+// Helper functions - defined at top level so they can be used anywhere
+function categorizeProduct(product) {
+    const name = (product.title || product.name || "").toLowerCase();
+    if (name.includes("ring") && !name.includes("earring")) return "rings";
+    if (name.includes("earring")) return "earrings";
+    if (name.includes("necklace") || name.includes("pendant")) return "necklaces";
+    if (name.includes("bracelet") || name.includes("cuff") || name.includes("bangle")) return "bracelets";
+    if (name.includes("band")) return "bands";
+    return "rings";
+}
+
+function determineMetalType(metal) {
+    const metalLower = (metal || "").toLowerCase();
+    if (metalLower.includes("rose")) return "rose-gold";
+    if (metalLower.includes("yellow") || metalLower.includes("champagne")) return "yellow-gold";
+    if (metalLower.includes("white")) return "white-gold";
+    if (metalLower.includes("platinum")) return "platinum";
+    return "yellow-gold";
 }
 
 function showNoProductsMessage() {
@@ -171,26 +205,6 @@ function loadCustomerProducts(products = null) {
         `;
         return;
     }
-
-    // Determine category from product name or metal type
-    const categorizeProduct = (product) => {
-        const name = (product.title || product.name || "").toLowerCase();
-        if (name.includes("ring")) return "rings";
-        if (name.includes("earring")) return "earrings";
-        if (name.includes("necklace")) return "necklaces";
-        if (name.includes("bracelet") || name.includes("cuff")) return "bracelets";
-        if (name.includes("band")) return "bands";
-        return "rings";
-    };
-
-    const determineMetalType = (metal) => {
-        const metalLower = (metal || "").toLowerCase();
-        if (metalLower.includes("rose")) return "rose-gold";
-        if (metalLower.includes("yellow") || metalLower.includes("champagne")) return "yellow-gold";
-        if (metalLower.includes("white")) return "white-gold";
-        if (metalLower.includes("platinum")) return "platinum";
-        return "yellow-gold";
-    };
 
     availableProducts.forEach(product => {
         const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
