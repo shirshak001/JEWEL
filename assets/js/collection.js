@@ -1,10 +1,68 @@
 // Collection Page Filtering and Product Display
 document.addEventListener('DOMContentLoaded', () => {
-    loadProducts();
+    fetchAndLoadCollectionProducts();
     initializeFilters();
     initializeSorting();
     initializeFilterToggle();
 });
+
+// Fetch products from API
+async function fetchAndLoadCollectionProducts() {
+    try {
+        // Get API URL from config
+        const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
+        
+        console.log('Fetching products from:', API_URL);
+        
+        // Fetch products from backend
+        const response = await fetch(`${API_URL}/api/products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const products = data.products || data || [];
+        
+        console.log('Products loaded:', products.length);
+        
+        // Store in localStorage for offline access
+        if (products.length > 0) {
+            localStorage.setItem("amberProducts", JSON.stringify(products));
+        }
+        
+        // Load products on page
+        loadProducts(products);
+        
+    } catch (error) {
+        console.error('Error fetching products from API:', error);
+        // Fallback to localStorage if fetch fails
+        const stored = localStorage.getItem("amberProducts");
+        if (stored) {
+            console.log('Using cached products from localStorage');
+            const products = JSON.parse(stored);
+            loadProducts(products);
+        } else {
+            showNoProductsMessage();
+        }
+    }
+}
+
+function showNoProductsMessage() {
+    const productsGrid = document.getElementById('products-grid');
+    if (productsGrid) {
+        productsGrid.innerHTML = `
+            <div class="no-products">
+                <p>Unable to load products. Please check your connection and try refreshing the page.</p>
+            </div>
+        `;
+    }
+}
 
 // Mobile filter toggle
 function initializeFilterToggle() {
@@ -21,12 +79,23 @@ function initializeFilterToggle() {
     });
 }
 
-function loadProducts() {
+function loadProducts(products = null) {
     const productsGrid = document.getElementById('products-grid');
     if (!productsGrid) return;
 
-    // Load products from localStorage
-    const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
+    // If no products passed, try to get from localStorage
+    if (!products) {
+        const stored = localStorage.getItem('amberProducts');
+        if (!stored) {
+            productsGrid.innerHTML = `
+                <div class="no-products">
+                    <p>No products available at the moment. Please check back soon.</p>
+                </div>
+            `;
+            return;
+        }
+        products = JSON.parse(stored);
+    }
 
     // Filter out-of-stock items and inactive products
     const availableProducts = products.filter(p => {
