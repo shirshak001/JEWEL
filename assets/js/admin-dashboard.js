@@ -281,15 +281,14 @@ async function addProduct(imageData, feedback) {
         const data = await response.json();
 
         if (response.ok) {
-            // Add to local products array with backend ID
-            const savedProduct = data.product || data.data;
-            products.push(savedProduct);
+            feedback.textContent = "Product added successfully! Refreshing...";
+            feedback.dataset.state = "success";
+
+            // Reload all products from backend to ensure sync
+            await loadProducts();
             
             renderInventory();
             renderAlerts();
-
-            feedback.textContent = "Product added successfully!";
-            feedback.dataset.state = "success";
 
             document.getElementById("add-product-form").reset();
             document.getElementById("image-preview").innerHTML = "";
