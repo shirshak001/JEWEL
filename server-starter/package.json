@@ -7,6 +7,7 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node scripts/seed.js",
+    "create-admin": "node scripts/createAdmin.js",
     "test": "jest --coverage"
   },
   "keywords": ["ecommerce", "jewellery", "api", "express", "mongodb"],
