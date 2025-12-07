@@ -149,7 +149,7 @@ async function saveProducts() {
 function renderInventory() {
     const grid = document.getElementById("inventory-grid");
     let filtered = products.filter(p => {
-        const stockCount = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const stockCount = p.inventory?.stock ?? p.inventory?.stock_count ?? p.quantity ?? 0;
         const threshold = p.lowStockThreshold || 5;
         
         const matchesFilter = currentFilter === "all" ||
@@ -248,17 +248,17 @@ async function addProduct(imageData, feedback) {
         slug: generateSlug(document.getElementById("product-name").value),
         description: document.getElementById("product-description").value,
         price: parseFloat(document.getElementById("product-price").value),
-        sale_price: null,
+        salePrice: null,
         categories: [],
         tags: [],
         images: imageData ? [{
             url: imageData,
             alt: document.getElementById("product-name").value,
-            is_primary: true
+            isPrimary: true
         }] : [],
         inventory: {
             sku: generateSKU(),
-            stock_count: parseInt(document.getElementById("product-quantity").value)
+            stock: parseInt(document.getElementById("product-quantity").value)
         },
         attributes: [
             { name: "metal", value: document.getElementById("product-metal").value },
@@ -350,7 +350,7 @@ function initializeEditModal() {
                 description: newDescription,
                 inventory: {
                     ...product.inventory,
-                    stock_count: newQuantity
+                    stock: newQuantity
                 }
             };
 
@@ -391,7 +391,7 @@ function editProduct(id) {
     document.getElementById("edit-product-id").value = product._id || product.id;
     document.getElementById("edit-product-name").value = product.title || product.name || "";
     document.getElementById("edit-product-price").value = product.price || 0;
-    document.getElementById("edit-product-quantity").value = product.inventory?.stock_count ?? product.quantity ?? 0;
+    document.getElementById("edit-product-quantity").value = product.inventory?.stock ?? product.inventory?.stock_count ?? product.quantity ?? 0;
     document.getElementById("edit-product-description").value = product.description || "";
 
     document.getElementById("edit-modal").classList.add("active");
