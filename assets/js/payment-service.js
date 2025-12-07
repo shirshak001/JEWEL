@@ -4,8 +4,8 @@
 const PAYMENT_CONFIG = {
   // Razorpay Configuration (Recommended for India)
   RAZORPAY: {
-    KEY_ID: 'YOUR_RAZORPAY_KEY_ID', // From Razorpay Dashboard
-    KEY_SECRET: 'YOUR_RAZORPAY_KEY_SECRET', // Keep this secret!
+    KEY_ID: 'rzp_test_Rol6LA7Doftqxo', // From Razorpay Dashboard
+    KEY_SECRET: 'NEVER_EXPOSE_ON_FRONTEND', // Keep this secret - only use on backend!
     CURRENCY: 'INR',
     COMPANY_NAME: 'Amber Atelier',
     LOGO: 'https://amber-ecru.vercel.app/assets/images/logo.png',
