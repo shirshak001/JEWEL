@@ -47,12 +47,14 @@ const adminProductsRouter = require('./routes/adminProducts');
 const authRouter = require('./routes/authRoutes');
 const uploadRouter = require('./routes/upload');
 const statsRouter = require('./routes/stats');
+const paymentsRouter = require('./routes/payments');
 
 // Public routes
 app.use('/api/products', publicProductsRouter);
 app.use('/api/categories', require('./routes/categories'));
 app.use('/api/auth/login', authLimiter, authRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/payments', paymentsRouter);
 
 // Admin routes (protected)
 app.use('/api/admin/products', adminProductsRouter);

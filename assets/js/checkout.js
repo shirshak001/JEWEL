@@ -122,14 +122,27 @@ function setupProgressFlow() {
     }
 
     if (placeOrderBtn) {
-        placeOrderBtn.addEventListener('click', () => {
+        placeOrderBtn.addEventListener('click', async () => {
             const selectedPayment = document.querySelector('input[name="payment"]:checked');
             if (!selectedPayment) {
                 alert('Please select a payment method');
                 return;
             }
 
-            processOrder(selectedPayment.value);
+            const paymentMethod = selectedPayment.value;
+            
+            // If Cash on Delivery, process directly
+            if (paymentMethod === 'cod') {
+                processOrder(paymentMethod);
+                return;
+            }
+            
+            // For online payments (Razorpay/Stripe)
+            if (paymentMethod === 'razorpay' || paymentMethod === 'online') {
+                await processOnlinePayment();
+            } else {
+                processOrder(paymentMethod);
+            }
         });
     }
 }
@@ -153,6 +166,37 @@ function updateProgress(step) {
             stepEl.classList.remove('active');
         }
     });
+}
+
+// Process online payment via Razorpay
+async function processOnlinePayment() {
+    const customerInfo = JSON.parse(localStorage.getItem('customerInfo') || '{}');
+    const cart = JSON.parse(localStorage.getItem('amberCart') || '[]');
+    const orderNumber = 'AMB' + Date.now().toString().slice(-8);
+    
+    if (!window.paymentService) {
+        alert('Payment service not loaded. Please refresh the page.');
+        return;
+    }
+    
+    const { subtotal, tax, total } = window.paymentService.calculateTotal(cart);
+    
+    const orderData = {
+        orderId: orderNumber,
+        amount: total,
+        customerName: customerInfo.name || 'Customer',
+        customerEmail: customerInfo.email || '',
+        customerPhone: customerInfo.phone || '',
+        items: cart
+    };
+    
+    // Process payment
+    try {
+        await window.paymentService.processRazorpayPayment(orderData);
+    } catch (error) {
+        console.error('Payment processing error:', error);
+        alert('Payment failed. Please try again or choose Cash on Delivery.');
+    }
 }
 
 async function processOrder(paymentMethod) {
