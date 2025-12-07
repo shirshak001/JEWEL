@@ -2,25 +2,80 @@
 // This script loads products from admin inventory and displays stock warnings
 
 document.addEventListener("DOMContentLoaded", () => {
-    loadHomepageProducts();
-    loadCustomerProducts();
+    fetchAndLoadProducts();
 });
 
-function loadHomepageProducts() {
+async function fetchAndLoadProducts() {
+    try {
+        // Get API URL from config
+        const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
+        
+        // Fetch products from backend
+        const response = await fetch(`${API_URL}/api/products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const products = data.products || data || [];
+        
+        // Store in localStorage for offline access
+        if (products.length > 0) {
+            localStorage.setItem("amberProducts", JSON.stringify(products));
+        }
+        
+        // Load products on page
+        loadHomepageProducts(products);
+        loadCustomerProducts(products);
+        
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        // Fallback to localStorage if fetch fails
+        const stored = localStorage.getItem("amberProducts");
+        if (stored) {
+            const products = JSON.parse(stored);
+            loadHomepageProducts(products);
+            loadCustomerProducts(products);
+        } else {
+            showNoProductsMessage();
+        }
+    }
+}
+
+function showNoProductsMessage() {
+    const homepageGrid = document.getElementById("homepage-products");
+    if (homepageGrid) {
+        homepageGrid.innerHTML = `
+            <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                <p style="color: var(--color-muted); font-size: 1.1rem;">Unable to load products. Please check your connection.</p>
+            </div>
+        `;
+    }
+}
+
+function loadHomepageProducts(products = null) {
     const homepageGrid = document.getElementById("homepage-products");
     if (!homepageGrid) return;
 
-    const stored = localStorage.getItem("amberProducts");
-    if (!stored) {
-        homepageGrid.innerHTML = `
-            <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
-                <p style="color: var(--color-muted); font-size: 1.1rem;">No products available yet. Products added via admin panel will appear here.</p>
-            </div>
-        `;
-        return;
+    // If no products passed, try to get from localStorage
+    if (!products) {
+        const stored = localStorage.getItem("amberProducts");
+        if (!stored) {
+            homepageGrid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <p style="color: var(--color-muted); font-size: 1.1rem;">No products available yet. Products added via admin panel will appear here.</p>
+                </div>
+            `;
+            return;
+        }
+        products = JSON.parse(stored);
     }
-
-    const products = JSON.parse(stored);
     const availableProducts = products.filter(p => {
         const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
         return stock > 0 && (p.active !== false);
@@ -90,15 +145,17 @@ function loadHomepageProducts() {
     initializeRevealAnimations();
 }
 
-function loadCustomerProducts() {
+function loadCustomerProducts(products = null) {
     const collectionGrid = document.querySelector(".collection-grid:not(#homepage-products)");
     
     if (!collectionGrid) return;
 
-    const stored = localStorage.getItem("amberProducts");
-    if (!stored) return;
-
-    const products = JSON.parse(stored);
+    // If no products passed, try to get from localStorage
+    if (!products) {
+        const stored = localStorage.getItem("amberProducts");
+        if (!stored) return;
+        products = JSON.parse(stored);
+    }
 
     // Filter only products that are in stock and active (not out of stock)
     const availableProducts = products.filter(p => {
