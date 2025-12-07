@@ -55,8 +55,8 @@
 
 ## Admin Portal Credentials
 - URL: `/admin/login.html`
-- Email: `shirshakmondaljspbuet@gmail.com`
-- Password: `Mondal@2003`
+- Email: `admin@example.com`
+- Password: `your-secure-password`
 
 ## Features Implemented
 - Customer jewellery website with dynamic inventory

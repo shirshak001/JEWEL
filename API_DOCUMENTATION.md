@@ -171,8 +171,8 @@ Admin authentication.
 **Example:**
 ```javascript
 const response = await AmberAPI.login({
-  email: 'shirshakmondaljspbuet@gmail.com',
-  password: 'Mondal@2003'
+  email: 'admin@example.com',
+  password: 'your-password'
 });
 ```
 

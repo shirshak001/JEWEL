@@ -51,8 +51,8 @@ assets/
 ### For Administrators
 1. Navigate to `/admin/login.html`
 2. Default credentials:
-   - Email: `shirshakmondaljspbuet@gmail.com`
-   - Password: `Mondal@2003`
+   - Email: `admin@example.com`
+   - Password: `your-secure-password`
 3. Session-based authentication with 1-hour timeout
 4. Access the inventory dashboard to:
    - Add new products with images, descriptions, and pricing
