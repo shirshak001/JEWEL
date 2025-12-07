@@ -155,19 +155,28 @@ function updateProgress(step) {
     });
 }
 
-function processOrder(paymentMethod) {
+async function processOrder(paymentMethod) {
     // Generate order number
     const orderNumber = 'AMB' + Date.now().toString().slice(-8);
     const customerInfo = JSON.parse(localStorage.getItem('customerInfo') || '{}');
+    const cart = JSON.parse(localStorage.getItem('amberCart') || '[]');
+    
+    // Calculate totals
+    const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+    const tax = Math.round(subtotal * 0.03);
+    const total = subtotal + tax;
 
     // Save order details
     const order = {
         orderNumber,
         date: new Date().toISOString(),
         customerInfo,
-        items: JSON.parse(localStorage.getItem('amberCart') || '[]'),
+        items: cart,
         paymentMethod,
-        status: 'confirmed'
+        status: 'confirmed',
+        subtotal,
+        tax,
+        total
     };
 
     const orders = JSON.parse(localStorage.getItem('amberOrders') || '[]');
@@ -176,6 +185,36 @@ function processOrder(paymentMethod) {
 
     // Update product quantities
     updateInventory(order.items);
+
+    // Send email notification to admin
+    try {
+        if (window.emailService) {
+            const emailData = {
+                id: orderNumber,
+                customerName: customerInfo.name || 'N/A',
+                customerEmail: customerInfo.email || 'N/A',
+                phone: customerInfo.phone || 'N/A',
+                address: `${customerInfo.address || ''}, ${customerInfo.city || ''}, ${customerInfo.state || ''} - ${customerInfo.zipCode || ''}`.trim(),
+                items: cart.map(item => ({
+                    name: item.name || item.title,
+                    quantity: item.quantity,
+                    price: item.price
+                })),
+                total: total
+            };
+            
+            // Send admin notification
+            const adminResult = await window.emailService.sendOrderNotification(emailData);
+            console.log('Admin email result:', adminResult);
+            
+            // Send customer confirmation
+            const customerResult = await window.emailService.sendCustomerConfirmation(emailData);
+            console.log('Customer email result:', customerResult);
+        }
+    } catch (emailError) {
+        console.error('Email sending failed:', emailError);
+        // Don't stop order processing if email fails
+    }
 
     // Clear cart
     localStorage.removeItem('amberCart');
