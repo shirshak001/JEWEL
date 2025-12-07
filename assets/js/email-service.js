@@ -139,7 +139,7 @@ class EmailService {
       // Send via EmailJS
       const response = await emailjs.send(
         EMAIL_CONFIG.SERVICE_ID,
-        'customer_confirmation_template', // Create this template in EmailJS
+        'template_0edks8j', // Customer confirmation template
         emailParams
       );
       
