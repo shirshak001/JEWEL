@@ -41,6 +41,12 @@ class EmailService {
   async init() {
     if (this.initialized) return;
     
+    // Check if EmailJS is configured
+    if (EMAIL_CONFIG.PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+      console.warn('EmailJS not configured. Email notifications disabled.');
+      return;
+    }
+    
     try {
       // Load EmailJS script dynamically
       await this.loadEmailJS();
@@ -72,6 +78,12 @@ class EmailService {
   async sendOrderNotification(orderData) {
     try {
       await this.init();
+      
+      // Skip if not configured
+      if (!this.initialized) {
+        console.warn('Email service not configured, skipping admin notification');
+        return { success: false, error: 'Email service not configured' };
+      }
       
       // Prepare email parameters
       const emailParams = {
@@ -107,6 +119,12 @@ class EmailService {
   async sendCustomerConfirmation(orderData) {
     try {
       await this.init();
+      
+      // Skip if not configured
+      if (!this.initialized) {
+        console.warn('Email service not configured, skipping customer confirmation');
+        return { success: false, error: 'Email service not configured' };
+      }
       
       const emailParams = {
         to_email: orderData.customerEmail,
