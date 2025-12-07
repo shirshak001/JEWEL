@@ -4,7 +4,7 @@ const EMAIL_CONFIG = {
   // Sign up at https://www.emailjs.com/
   SERVICE_ID: 'service_79zno9n',
   TEMPLATE_ID: 'template_qkz8wod', // Update this with your template ID
-  PUBLIC_KEY: 'YOUR_PUBLIC_KEY', // Get from EmailJS Account settings
+  PUBLIC_KEY: '5OdOzrzDFhIbtdccq', // EmailJS Public Key
   
   // Admin email to receive order notifications
   ADMIN_EMAIL: 'shirshakmondaljspbuet@gmail.com',
