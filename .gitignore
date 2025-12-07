@@ -1,0 +1,8 @@
+server-starter/
+node_modules/
+.env
+*.log
+.DS_Store
+PRODUCTION_CHECKLIST.md
+DEPLOYMENT_GUIDE.md
+API_DOCUMENTATION.md
