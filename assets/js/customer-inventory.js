@@ -111,7 +111,7 @@ function loadHomepageProducts(products = null) {
         products = JSON.parse(stored);
     }
     const availableProducts = products.filter(p => {
-        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const stock = p.inventory?.stock ?? p.inventory?.stock ?? p.inventory?.stock_count ?? p.quantity ?? 0;
         return stock > 0 && (p.active !== false);
     }).slice(0, 6); // Show max 6 on homepage
 
@@ -125,7 +125,7 @@ function loadHomepageProducts(products = null) {
     }
 
     availableProducts.forEach(product => {
-        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const stock = product.inventory?.stock ?? product.inventory?.stock_count ?? product.quantity ?? 0;
         const threshold = product.lowStockThreshold ?? 3;
         const isLowStock = stock <= threshold;
         const stockWarning = isLowStock ? 
@@ -135,7 +135,7 @@ function loadHomepageProducts(products = null) {
         const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
         const gemstone = product.attributes?.find(a => a.name === "gemstone")?.value || product.gemstone || "";
         const metalType = determineMetalType(metal);
-        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const primaryImage = product.images?.find(img => img.isPrimary || img.is_primary)?.url || product.image || "";
         const productName = product.title || product.name || "Untitled";
         const productDescription = product.description || "";
         const productPrice = product.price ?? 0;
@@ -193,7 +193,7 @@ function loadCustomerProducts(products = null) {
 
     // Filter only products that are in stock and active (not out of stock)
     const availableProducts = products.filter(p => {
-        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const stock = p.inventory?.stock ?? p.inventory?.stock ?? p.inventory?.stock_count ?? p.quantity ?? 0;
         return stock > 0 && (p.active !== false);
     });
 
@@ -207,7 +207,7 @@ function loadCustomerProducts(products = null) {
     }
 
     availableProducts.forEach(product => {
-        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const stock = product.inventory?.stock ?? product.inventory?.stock_count ?? product.quantity ?? 0;
         const threshold = product.lowStockThreshold ?? 3;
         const isLowStock = stock <= threshold;
         const stockWarning = isLowStock ? 
@@ -217,7 +217,7 @@ function loadCustomerProducts(products = null) {
         const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
         const gemstone = product.attributes?.find(a => a.name === "gemstone")?.value || product.gemstone || "";
         const metalType = determineMetalType(metal);
-        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const primaryImage = product.images?.find(img => img.isPrimary || img.is_primary)?.url || product.image || "";
         const productName = product.title || product.name || "Untitled";
         const productDescription = product.description || "";
         const productPrice = product.price ?? 0;

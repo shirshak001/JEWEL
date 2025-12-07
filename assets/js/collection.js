@@ -109,7 +109,7 @@ function loadProducts(products = null) {
 
     // Filter out-of-stock items and inactive products
     const availableProducts = products.filter(p => {
-        const stock = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const stock = p.inventory?.stock ?? p.inventory?.stock_count ?? p.quantity ?? 0;
         return stock > 0 && (p.active !== false);
     });
 
@@ -132,10 +132,10 @@ function renderProducts(products) {
         const category = categorizeProduct(product);
         const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
         const metalType = determineMetalType(metal);
-        const stock = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const stock = product.inventory?.stock ?? product.inventory?.stock_count ?? product.quantity ?? 0;
         const threshold = product.lowStockThreshold ?? 5;
         const lowStock = stock <= threshold;
-        const primaryImage = product.images?.find(img => img.is_primary)?.url || product.image || "";
+        const primaryImage = product.images?.find(img => img.isPrimary || img.is_primary)?.url || product.images?.[0]?.url || product.image || "";
         const productName = product.title || product.name || "Untitled";
         const productPrice = product.price ?? 0;
 
