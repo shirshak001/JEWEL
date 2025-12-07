@@ -3,7 +3,23 @@ document.addEventListener('DOMContentLoaded', () => {
     loadProducts();
     initializeFilters();
     initializeSorting();
+    initializeFilterToggle();
 });
+
+// Mobile filter toggle
+function initializeFilterToggle() {
+    const toggleBtn = document.getElementById('filter-toggle');
+    const sidebar = document.getElementById('filter-sidebar');
+    const icon = document.getElementById('filter-icon');
+
+    if (!toggleBtn || !sidebar) return;
+
+    toggleBtn.addEventListener('click', () => {
+        const isOpen = sidebar.classList.toggle('open');
+        toggleBtn.setAttribute('aria-expanded', isOpen);
+        icon.textContent = isOpen ? '▲' : '▼';
+    });
+}
 
 function loadProducts() {
     const productsGrid = document.getElementById('products-grid');
