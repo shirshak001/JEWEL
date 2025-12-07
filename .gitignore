@@ -1,6 +1,7 @@
-server-starter/
 node_modules/
 .env
+server-starter/.env
+server-starter/node_modules/
 *.log
 .DS_Store
 PRODUCTION_CHECKLIST.md
