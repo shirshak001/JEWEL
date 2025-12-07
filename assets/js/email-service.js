@@ -87,8 +87,6 @@ class EmailService {
       
       // Prepare email parameters
       const emailParams = {
-        to_email: EMAIL_CONFIG.ADMIN_EMAIL,
-        subject: EMAIL_CONFIG.ORDER_SUBJECT,
         order_id: orderData.id || Date.now(),
         customer_name: orderData.customerName,
         customer_email: orderData.customerEmail,
@@ -96,7 +94,8 @@ class EmailService {
         customer_address: orderData.address,
         items_list: this.formatOrderItems(orderData.items),
         total_amount: orderData.total,
-        order_date: new Date().toLocaleString()
+        order_date: new Date().toLocaleString(),
+        email: EMAIL_CONFIG.ADMIN_EMAIL
       };
       
       // Send via EmailJS
@@ -127,13 +126,15 @@ class EmailService {
       }
       
       const emailParams = {
-        to_email: orderData.customerEmail,
-        to_name: orderData.customerName,
-        subject: 'Order Confirmation - Amber Atelier',
         order_id: orderData.id || Date.now(),
+        customer_name: orderData.customerName,
+        customer_email: orderData.customerEmail,
+        customer_phone: orderData.phone || 'N/A',
+        customer_address: orderData.address,
         items_list: this.formatOrderItems(orderData.items),
         total_amount: orderData.total,
-        order_date: new Date().toLocaleString()
+        order_date: new Date().toLocaleString(),
+        email: orderData.customerEmail
       };
       
       // Send via EmailJS
