@@ -222,7 +222,7 @@ function initializeProductForm() {
         }
     });
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const feedback = form.querySelector(".form-feedback");
 
@@ -231,13 +231,13 @@ function initializeProductForm() {
 
         if (imageFile) {
             const reader = new FileReader();
-            reader.onload = (event) => {
+            reader.onload = async (event) => {
                 imageData = event.target.result;
-                addProduct(imageData, feedback);
+                await addProduct(imageData, feedback);
             };
             reader.readAsDataURL(imageFile);
         } else {
-            addProduct(imageData, feedback);
+            await addProduct(imageData, feedback);
         }
     });
 }
