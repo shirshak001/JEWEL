@@ -3,6 +3,17 @@ let products = [];
 let currentFilter = "all";
 let searchTerm = "";
 
+const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
+
+// Helper function to get auth headers
+function getAuthHeaders() {
+    const token = localStorage.getItem("adminToken");
+    return {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+    };
+}
+
 // Check authentication with session validation
 function validateSession() {
     const authData = JSON.parse(localStorage.getItem("adminAuth") || "{}");
@@ -77,33 +88,78 @@ function initializeNavigation() {
 
 // Load products from localStorage
 function loadProducts() {
-    const stored = localStorage.getItem("amberProducts");
-    if (stored) {
-        products = JSON.parse(stored);
-    } else {
-        // Initialize with empty inventory
-        products = [];
+    // Try to fetch from backend first
+    fetchProductsFromBackend();
+}
+
+async function fetchProductsFromBackend() {
+    try {
+        const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
+        const response = await fetch(`${API_URL}/api/products`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // Handle different response formats
+            if (Array.isArray(data)) {
+                products = data;
+            } else if (data.products && Array.isArray(data.products)) {
+                products = data.products;
+            } else if (data.data && Array.isArray(data.data)) {
+                products = data.data;
+            }
+            
+            // Also save to localStorage as backup
+            if (products.length > 0) {
+                localStorage.setItem("amberProducts", JSON.stringify(products));
+            }
+        } else {
+            throw new Error('Failed to fetch from backend');
+        }
+    } catch (error) {
+        console.error('Error fetching products from backend:', error);
+        // Fallback to localStorage
+        const stored = localStorage.getItem("amberProducts");
+        if (stored) {
+            products = JSON.parse(stored);
+        } else {
+            products = [];
+        }
     }
+    
     renderInventory();
     renderAlerts();
 }
 
-function saveProducts() {
+async function saveProducts() {
+    // Save to localStorage as backup
     localStorage.setItem("amberProducts", JSON.stringify(products));
     updateAlertCount();
+    
+    // TODO: Implement backend sync when admin API endpoints are ready
+    // For now, products are only saved locally
+    console.log('Products saved to localStorage. Backend sync not yet implemented.');
 }
 
 // Render inventory grid
 function renderInventory() {
     const grid = document.getElementById("inventory-grid");
     let filtered = products.filter(p => {
+        const stockCount = p.inventory?.stock_count ?? p.quantity ?? 0;
+        const threshold = p.lowStockThreshold || 5;
+        
         const matchesFilter = currentFilter === "all" ||
-            (currentFilter === "low" && p.quantity > 0 && p.quantity <= p.lowStockThreshold) ||
-            (currentFilter === "out" && p.quantity === 0) ||
-            (currentFilter === "available" && p.quantity > p.lowStockThreshold);
+            (currentFilter === "low" && stockCount > 0 && stockCount <= threshold) ||
+            (currentFilter === "out" && stockCount === 0) ||
+            (currentFilter === "available" && stockCount > threshold);
 
+        const productName = p.title || p.name || "";
         const matchesSearch = searchTerm === "" ||
-            p.name.toLowerCase().includes(searchTerm.toLowerCase());
+            productName.toLowerCase().includes(searchTerm.toLowerCase());
 
         return matchesFilter && matchesSearch;
     });
@@ -114,27 +170,34 @@ function renderInventory() {
     }
 
     grid.innerHTML = filtered.map(product => {
-        const stockStatus = product.quantity === 0 ? "out" :
-            product.quantity <= product.lowStockThreshold ? "low" : "available";
+        const productId = product._id || product.id;
+        const productName = product.title || product.name || "Unnamed Product";
+        const productPrice = product.price || 0;
+        const stockCount = product.inventory?.stock_count ?? product.quantity ?? 0;
+        const threshold = product.lowStockThreshold || 5;
+        const productImage = product.images?.[0]?.url || product.image || "";
+        
+        const stockStatus = stockCount === 0 ? "out" :
+            stockCount <= threshold ? "low" : "available";
 
-        const stockClass = product.quantity === 0 ? "out-of-stock" :
-            product.quantity <= product.lowStockThreshold ? "low-stock" : "";
+        const stockClass = stockCount === 0 ? "out-of-stock" :
+            stockCount <= threshold ? "low-stock" : "";
 
         return `
-            <div class="inventory-card ${stockClass}" data-id="${product.id}">
+            <div class="inventory-card ${stockClass}" data-id="${productId}">
                 <div class="inventory-image">
-                    ${product.image ? `<img src="${product.image}" alt="${product.name}">` : 
+                    ${productImage ? `<img src="${productImage}" alt="${productName}">` : 
                     '<span class="placeholder">No Image</span>'}
                     <span class="stock-badge ${stockStatus}">${stockStatus === "out" ? "Out of Stock" : 
                         stockStatus === "low" ? "Low Stock" : "In Stock"}</span>
                 </div>
                 <div class="inventory-body">
-                    <h3>${product.name}</h3>
-                    <div class="inventory-price">₹${product.price.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                    <div class="inventory-stock">Quantity: ${product.quantity}</div>
+                    <h3>${productName}</h3>
+                    <div class="inventory-price">₹${productPrice.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                    <div class="inventory-stock">Quantity: ${stockCount}</div>
                     <div class="inventory-actions">
-                        <button class="btn-icon" onclick="editProduct(${product.id})">Edit</button>
-                        <button class="btn-icon delete" onclick="deleteProduct(${product.id})">Delete</button>
+                        <button class="btn-icon" onclick="editProduct('${productId}')">Edit</button>
+                        <button class="btn-icon delete" onclick="deleteProduct('${productId}')">Delete</button>
                     </div>
                 </div>
             </div>
@@ -179,9 +242,8 @@ function initializeProductForm() {
     });
 }
 
-function addProduct(imageData, feedback) {
+async function addProduct(imageData, feedback) {
     const newProduct = {
-        id: Date.now(),
         title: document.getElementById("product-name").value,
         slug: generateSlug(document.getElementById("product-name").value),
         description: document.getElementById("product-description").value,
@@ -203,28 +265,42 @@ function addProduct(imageData, feedback) {
             { name: "gemstone", value: document.getElementById("product-gemstone").value || "" }
         ],
         active: true,
-        lowStockThreshold: parseInt(document.getElementById("product-low-stock").value),
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        
-        // Legacy fields for backward compatibility
-        name: document.getElementById("product-name").value,
-        metal: document.getElementById("product-metal").value,
-        gemstone: document.getElementById("product-gemstone").value || "",
-        quantity: parseInt(document.getElementById("product-quantity").value),
-        image: imageData
+        lowStockThreshold: parseInt(document.getElementById("product-low-stock").value)
     };
 
-    products.push(newProduct);
-    saveProducts();
-    renderInventory();
-    renderAlerts();
+    try {
+        feedback.textContent = "Adding product...";
+        feedback.dataset.state = "info";
 
-    feedback.textContent = "Product added successfully!";
-    feedback.dataset.state = "success";
+        const response = await fetch(`${API_URL}/api/admin/products`, {
+            method: 'POST',
+            headers: getAuthHeaders(),
+            body: JSON.stringify(newProduct)
+        });
 
-    document.getElementById("add-product-form").reset();
-    document.getElementById("image-preview").innerHTML = "";
+        const data = await response.json();
+
+        if (response.ok) {
+            // Add to local products array with backend ID
+            const savedProduct = data.product || data.data;
+            products.push(savedProduct);
+            
+            renderInventory();
+            renderAlerts();
+
+            feedback.textContent = "Product added successfully!";
+            feedback.dataset.state = "success";
+
+            document.getElementById("add-product-form").reset();
+            document.getElementById("image-preview").innerHTML = "";
+        } else {
+            throw new Error(data.error || 'Failed to add product');
+        }
+    } catch (error) {
+        console.error('Error adding product:', error);
+        feedback.textContent = `Error: ${error.message}`;
+        feedback.dataset.state = "error";
+    }
 
     setTimeout(() => {
         feedback.textContent = "";
@@ -257,10 +333,10 @@ function initializeEditModal() {
     closeBtn.addEventListener("click", () => modal.classList.remove("active"));
     cancelBtn.addEventListener("click", () => modal.classList.remove("active"));
 
-    form.addEventListener("submit", (e) => {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
-        const id = parseInt(document.getElementById("edit-product-id").value);
-        const product = products.find(p => p.id === id);
+        const productId = document.getElementById("edit-product-id").value;
+        const product = products.find(p => (p._id || p.id) === productId);
 
         if (product) {
             const newName = document.getElementById("edit-product-name").value;
@@ -268,33 +344,52 @@ function initializeEditModal() {
             const newQuantity = parseInt(document.getElementById("edit-product-quantity").value);
             const newDescription = document.getElementById("edit-product-description").value;
             
-            // Update new model fields
-            product.title = newName;
-            product.slug = generateSlug(newName);
-            product.price = newPrice;
-            product.description = newDescription;
-            if (product.inventory) {
-                product.inventory.stock_count = newQuantity;
-            }
-            product.updatedAt = new Date().toISOString();
-            
-            // Update legacy fields for backward compatibility
-            product.name = newName;
-            product.quantity = newQuantity;
+            const updatedProduct = {
+                title: newName,
+                slug: generateSlug(newName),
+                price: newPrice,
+                description: newDescription,
+                inventory: {
+                    ...product.inventory,
+                    stock_count: newQuantity
+                }
+            };
 
-            saveProducts();
-            renderInventory();
-            renderAlerts();
-            modal.classList.remove("active");
+            try {
+                const response = await fetch(`${API_URL}/api/admin/products/${productId}`, {
+                    method: 'PUT',
+                    headers: getAuthHeaders(),
+                    body: JSON.stringify(updatedProduct)
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    // Update local products array
+                    const index = products.findIndex(p => (p._id || p.id) === productId);
+                    if (index !== -1) {
+                        products[index] = data.product || data.data;
+                    }
+
+                    renderInventory();
+                    renderAlerts();
+                    modal.classList.remove("active");
+                } else {
+                    throw new Error(data.error || 'Failed to update product');
+                }
+            } catch (error) {
+                console.error('Error updating product:', error);
+                alert(`Error updating product: ${error.message}`);
+            }
         }
     });
 }
 
 function editProduct(id) {
-    const product = products.find(p => p.id === id);
+    const product = products.find(p => (p._id || p.id) === id);
     if (!product) return;
 
-    document.getElementById("edit-product-id").value = product.id;
+    document.getElementById("edit-product-id").value = product._id || product.id;
     document.getElementById("edit-product-name").value = product.title || product.name || "";
     document.getElementById("edit-product-price").value = product.price || 0;
     document.getElementById("edit-product-quantity").value = product.inventory?.stock_count ?? product.quantity ?? 0;
@@ -303,12 +398,28 @@ function editProduct(id) {
     document.getElementById("edit-modal").classList.add("active");
 }
 
-function deleteProduct(id) {
+async function deleteProduct(id) {
     if (confirm("Are you sure you want to delete this product?")) {
-        products = products.filter(p => p.id !== id);
-        saveProducts();
-        renderInventory();
-        renderAlerts();
+        try {
+            const response = await fetch(`${API_URL}/api/admin/products/${id}`, {
+                method: 'DELETE',
+                headers: getAuthHeaders()
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Remove from local products array
+                products = products.filter(p => (p._id || p.id) !== id);
+                renderInventory();
+                renderAlerts();
+            } else {
+                throw new Error(data.error || 'Failed to delete product');
+            }
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            alert(`Error deleting product: ${error.message}`);
+        }
     }
 }
 
@@ -356,15 +467,18 @@ function renderAlerts() {
         return;
     }
 
-    container.innerHTML = alerts.map(alert => `
-        <div class="alert-card ${alert.level}">
-            <div class="alert-info">
-                <h4>${alert.product.title || alert.product.name}</h4>
-                <p>${alert.message}</p>
+    container.innerHTML = alerts.map(alert => {
+        const productId = alert.product._id || alert.product.id;
+        return `
+            <div class="alert-card ${alert.level}">
+                <div class="alert-info">
+                    <h4>${alert.product.title || alert.product.name}</h4>
+                    <p>${alert.message}</p>
+                </div>
+                <button class="btn-icon" onclick="editProduct('${productId}')">Update Stock</button>
             </div>
-            <button class="btn-icon" onclick="editProduct(${alert.product.id})">Update Stock</button>
-        </div>
-    `).join("");
+        `;
+    }).join("");
 }
 
 function updateAlertCount() {

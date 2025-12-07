@@ -50,27 +50,34 @@ assets/
 
 ### For Administrators
 1. Navigate to `/admin/login.html`
-2. Default credentials:
-   - Email: `admin@example.com`
-   - Password: `your-secure-password`
-3. Session-based authentication with 1-hour timeout
+2. Login credentials:
+   - Email: `shirshakmondaljspbuet@gmail.com`
+   - Password: `Mondal@2003`
+3. JWT-based authentication with 7-day token expiry
 4. Access the inventory dashboard to:
    - Add new products with images, descriptions, and pricing
    - Set initial stock quantities and low-stock thresholds
    - Edit existing products and update quantities
    - Monitor stock alerts in real-time
    - Delete discontinued items
-5. All changes automatically sync to customer site in real-time
+5. All changes are saved to MongoDB and sync across all devices in real-time
 
 ## Authentication & Security
 
-### Enhanced Features
-- **Password Hashing**: SHA-256 password hashing (use bcrypt in production)
-- **Session Management**: 1-hour session timeout with auto-renewal on activity
-- **Session Validation**: Each page load validates and extends active sessions
-- **Secure Logout**: Confirmation prompt and complete session cleanup
-- **Input Validation**: Email and password field validation before submission
-- **Auto-redirect**: Logged-in users automatically redirected from login page
+### Backend Integration
+- **JWT Authentication**: Secure token-based authentication with 7-day expiry
+- **MongoDB Database**: Products stored in MongoDB Atlas cloud database
+- **API Endpoints**: RESTful API with role-based access control
+- **Password Security**: bcrypt password hashing on server-side
+- **Authorization**: Bearer token authentication for admin routes
+- **Session Management**: Token stored in localStorage for persistent login
+
+### API Endpoints
+- **Public**: `GET /api/products` - View products (no auth required)
+- **Admin**: `POST /api/admin/products` - Create product (auth required)
+- **Admin**: `PUT /api/admin/products/:id` - Update product (auth required)
+- **Admin**: `DELETE /api/admin/products/:id` - Delete product (auth required)
+- **Auth**: `POST /api/auth/login` - Admin login
 
 ## How Inventory Works
 
@@ -80,7 +87,7 @@ assets/
 3. Upload product image
 4. Set initial stock quantity
 5. Set low stock threshold (when warnings appear)
-6. Products immediately appear on customer site
+6. Product is saved to MongoDB and appears on customer site immediately
 
 ### Stock Management
 - **Available**: Quantity above threshold - shows normally to customers
@@ -88,27 +95,48 @@ assets/
 - **Out of Stock**: Quantity = 0 - hidden from customer site, alerts admin
 
 ### Automatic Features
-- Stock levels stored in browser localStorage
-- No backend server required (perfect for static hosting)
-- Customer site automatically pulls latest inventory
+- Stock levels stored in MongoDB Atlas
+- Customer site automatically pulls latest inventory from backend API
 - Warnings update in real-time on both admin and customer sides
 - Admin dashboard shows alert badges for items needing attention
+- Cross-device synchronization - changes appear on all devices
+
+## Deployment
+
+### Backend (Render.com)
+- URL: https://jewel-b1ic.onrender.com
+- MongoDB Atlas connected
+- Environment variables configured (JWT_SECRET, MONGODB_URI, CORS_ORIGIN)
+- Automatic deploys from main branch
+
+### Frontend (Vercel)
+- URL: https://amber-ecru.vercel.app
+- Connected to backend API
+- Environment variables: API_URL=https://jewel-b1ic.onrender.com
+
+### Creating Admin User
+Run this command in the backend server:
+```bash
+cd server-starter
+node scripts/createAdmin.js
+```
 
 ## Customisation Tips
 - Update the colour system in `:root` within `assets/css/styles.css` and `assets/css/admin.css`
-- Change admin credentials in `assets/js/admin-auth.js`
-- Modify default low-stock threshold in Settings panel
+- Modify low-stock thresholds when adding products
 - Swap typography by modifying the `@import` statement at the top of stylesheets
-- For production: replace localStorage with a proper backend API
+- Update backend API URL in `assets/js/config.js`
 
-## Security Note
-This implementation uses localStorage and client-side authentication for demonstration. For production deployment:
-- **Backend Required**: Implement proper server-side authentication with JWT or session cookies
-- **Database**: Store products in a database (PostgreSQL, MongoDB, etc.)
-- **Password Security**: Use bcrypt or Argon2 for password hashing on the server
-- **API Security**: Create RESTful API endpoints with authentication middleware
-- **HTTPS**: Always use HTTPS in production
-- **Rate Limiting**: Implement login attempt rate limiting
-- **Image Hosting**: Use cloud storage (AWS S3, Cloudinary) for product images
-- **Validation**: Server-side validation for all inputs
-- **CORS**: Configure proper CORS policies for API access
+## Technologies Used
+
+### Frontend
+- HTML5, CSS3, Vanilla JavaScript
+- EmailJS for contact form
+- Razorpay for payment processing
+
+### Backend
+- Node.js + Express
+- MongoDB + Mongoose
+- JWT for authentication
+- bcrypt for password hashing
+- Multer for image uploads

@@ -46,7 +46,7 @@
 	Prompt user for debug mode, launch only if confirmed.
 	 -->
 
-- [ ] Ensure Documentation is Complete
+- [x] Ensure Documentation is Complete (README and copilot-instructions updated)
 	<!--
 	Verify that all previous steps have been completed.
 	Verify that README.md and the copilot-instructions.md file in the .github directory exists and contains current project information.
@@ -55,17 +55,30 @@
 
 ## Admin Portal Credentials
 - URL: `/admin/login.html`
-- Email: `admin@example.com`
-- Password: `your-secure-password`
+- Email: `shirshakmondaljspbuet@gmail.com`
+- Password: `Mondal@2003`
 
 ## Features Implemented
 - Customer jewellery website with dynamic inventory
-- Admin portal with secure login (hidden from customers)
-- Add/Edit/Delete products with image upload
+- Admin portal with JWT-based secure authentication
+- Backend API with MongoDB Atlas database
+- Add/Edit/Delete products with image upload via admin panel
+- Products saved to MongoDB and sync across all devices
 - Automatic stock quantity tracking
 - Low stock warnings on both customer and admin sides
 - Out-of-stock items hidden from customers
 - Real-time inventory sync between admin and customer views
+- Email notifications via EmailJS
+- Payment processing via Razorpay
+- Deployed on Vercel (frontend) and Render (backend)
+
+## Backend Integration Complete
+- JWT authentication with 7-day token expiry
+- RESTful API with role-based access control
+- MongoDB Atlas for persistent storage
+- CORS configured for cross-origin requests
+- All admin operations (add/edit/delete) use backend API
+- Products automatically sync across all devices
 
 <!--
 ## Execution Guidelines

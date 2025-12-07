@@ -1,56 +1,40 @@
-// Admin Authentication Logic with enhanced security
-const AUTH_CONFIG = {
-    users: [
-        {
-            email: "shirshakmondaljspbuet@gmail.com",
-            passwordHash: "569e8ddd484a4bd3f547ffc342a9ff212fe74717ca19796c9b66a47c2597690c",
-            role: "admin"
-        }
-    ],
-    sessionTimeout: 3600000 // 1 hour
-};
-
-// Simple hash function (for demo - use bcrypt in production)
-async function hashPassword(password) {
-    const encoder = new TextEncoder();
-    const data = encoder.encode(password);
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-    const hashArray = Array.from(new Uint8Array(hashBuffer));
-    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
+// Admin Authentication Logic with Backend API
+const API_URL = window.APP_CONFIG?.API_URL || 'https://jewel-b1ic.onrender.com';
 
 function validateSession() {
+    const token = localStorage.getItem("adminToken");
     const authData = JSON.parse(localStorage.getItem("adminAuth") || "{}");
-    const now = Date.now();
     
-    if (authData.authenticated && authData.sessionStart) {
-        const elapsed = now - authData.sessionStart;
-        if (elapsed < AUTH_CONFIG.sessionTimeout) {
-            // Extend session
-            authData.sessionStart = now;
-            localStorage.setItem("adminAuth", JSON.stringify(authData));
-            return true;
-        }
+    if (token && authData.authenticated) {
+        return true;
     }
     
     // Clear invalid session
+    localStorage.removeItem("adminToken");
     localStorage.removeItem("adminAuth");
     return false;
 }
 
-function createSession(email, role) {
+function createSession(token, user) {
     const sessionData = {
         authenticated: true,
-        email: email,
-        role: role,
-        sessionStart: Date.now(),
-        sessionId: generateSessionId()
+        email: user.email,
+        role: user.role,
+        name: user.name,
+        userId: user.id,
+        sessionStart: Date.now()
     };
+    localStorage.setItem("adminToken", token);
     localStorage.setItem("adminAuth", JSON.stringify(sessionData));
 }
 
-function generateSessionId() {
-    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+function getAuthToken() {
+    return localStorage.getItem("adminToken");
+}
+
+function clearSession() {
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminAuth");
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -76,28 +60,39 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Hash the entered password
-            const enteredHash = await hashPassword(password);
+            // Show loading state
+            feedback.textContent = "Logging in...";
+            feedback.dataset.state = "info";
 
-            // Find matching user
-            const user = AUTH_CONFIG.users.find(u => 
-                u.email.toLowerCase() === email.toLowerCase() && 
-                u.passwordHash === enteredHash
-            );
+            try {
+                // Call backend API for authentication
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
 
-            if (user) {
-                createSession(user.email, user.role);
-                feedback.textContent = "Login successful. Redirecting...";
-                feedback.dataset.state = "success";
-                
-                setTimeout(() => {
-                    window.location.href = "dashboard.html";
-                }, 800);
-            } else {
-                feedback.textContent = "Invalid credentials. Please try again.";
+                const data = await response.json();
+
+                if (response.ok && data.token) {
+                    createSession(data.token, data.user);
+                    feedback.textContent = "Login successful. Redirecting...";
+                    feedback.dataset.state = "success";
+                    
+                    setTimeout(() => {
+                        window.location.href = "dashboard.html";
+                    }, 800);
+                } else {
+                    feedback.textContent = data.error || "Invalid credentials. Please try again.";
+                    feedback.dataset.state = "error";
+                    document.getElementById("admin-password").value = "";
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                feedback.textContent = "Unable to connect to server. Please try again later.";
                 feedback.dataset.state = "error";
-                
-                // Clear password field on failed attempt
                 document.getElementById("admin-password").value = "";
             }
         });
