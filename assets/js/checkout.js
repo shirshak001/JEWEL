@@ -47,12 +47,18 @@ function displayOrderSummary(cart) {
 
 function setupFormValidation() {
     const form = document.getElementById('checkout-form');
-    if (!form) return;
+    if (!form) {
+        console.error('Checkout form not found');
+        return;
+    }
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
+        console.log('Form submitted');
 
         if (!validateForm(form)) {
+            console.log('Form validation failed');
+            alert('Please fill in all required fields correctly');
             return;
         }
 
@@ -60,6 +66,7 @@ function setupFormValidation() {
         const formData = new FormData(form);
         const customerInfo = Object.fromEntries(formData);
         localStorage.setItem('customerInfo', JSON.stringify(customerInfo));
+        console.log('Customer info saved, moving to payment section');
 
         // Move to payment section
         showSection('payment-section');
@@ -70,13 +77,19 @@ function setupFormValidation() {
 function validateForm(form) {
     let isValid = true;
     const inputs = form.querySelectorAll('input[required]');
+    const errors = [];
 
     inputs.forEach(input => {
+        const fieldName = input.name || input.id;
+        
         if (!input.value.trim()) {
             input.classList.add('error');
+            input.style.borderColor = '#ef4444';
+            errors.push(`${fieldName} is required`);
             isValid = false;
         } else {
             input.classList.remove('error');
+            input.style.borderColor = '';
         }
 
         // Email validation
@@ -84,6 +97,8 @@ function validateForm(form) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(input.value)) {
                 input.classList.add('error');
+                input.style.borderColor = '#ef4444';
+                errors.push('Invalid email format');
                 isValid = false;
             }
         }
@@ -93,6 +108,8 @@ function validateForm(form) {
             const phoneRegex = /^[+]?[0-9]{10,15}$/;
             if (!phoneRegex.test(input.value.replace(/\s/g, ''))) {
                 input.classList.add('error');
+                input.style.borderColor = '#ef4444';
+                errors.push('Invalid phone number');
                 isValid = false;
             }
         }
@@ -102,10 +119,16 @@ function validateForm(form) {
             const pincodeRegex = /^[0-9]{6}$/;
             if (!pincodeRegex.test(input.value)) {
                 input.classList.add('error');
+                input.style.borderColor = '#ef4444';
+                errors.push('PIN code must be 6 digits');
                 isValid = false;
             }
         }
     });
+
+    if (!isValid) {
+        console.log('Validation errors:', errors);
+    }
 
     return isValid;
 }
@@ -148,6 +171,8 @@ function setupProgressFlow() {
 }
 
 function showSection(sectionId) {
+    console.log('Switching to section:', sectionId);
+    
     document.querySelectorAll('.checkout-section').forEach(section => {
         section.classList.add('hidden');
     });
@@ -155,6 +180,12 @@ function showSection(sectionId) {
     const targetSection = document.getElementById(sectionId);
     if (targetSection) {
         targetSection.classList.remove('hidden');
+        console.log('Section switched successfully');
+        
+        // Scroll to top of section
+        targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else {
+        console.error('Section not found:', sectionId);
     }
 }
 
