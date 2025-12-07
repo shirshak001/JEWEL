@@ -3,7 +3,7 @@ const CONFIG = {
   // Automatically switch between local and production
   API_URL: window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
     ? 'http://localhost:5000'
-    : 'https://amber-atelier-api.onrender.com', // Update with your actual Render URL
+    : 'https://amber-atelier-api.onrender.com',
   
   ENVIRONMENT: window.location.hostname === 'localhost' ? 'development' : 'production',
   
