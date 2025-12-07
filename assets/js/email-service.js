@@ -3,7 +3,7 @@ const EMAIL_CONFIG = {
   // EmailJS Configuration (Free - 200 emails/month)
   // Sign up at https://www.emailjs.com/
   SERVICE_ID: 'service_79zno9n',
-  TEMPLATE_ID: 'template_qkz8wod', // Update this with your template ID
+  TEMPLATE_ID: 'template_wyxmw4p', // Admin order notification template
   PUBLIC_KEY: '5OdOzrzDFhIbtdccq', // EmailJS Public Key
   
   // Admin email to receive order notifications
