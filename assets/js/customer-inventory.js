@@ -113,7 +113,7 @@ function loadHomepageProducts(products = null) {
     const availableProducts = products.filter(p => {
         const stock = p.inventory?.stock ?? p.inventory?.stock ?? p.inventory?.stock_count ?? p.quantity ?? 0;
         return stock > 0 && (p.active !== false);
-    }).slice(0, 6); // Show max 6 on homepage
+    }).slice(0, 10); // Show max 10 for carousel
 
     if (availableProducts.length === 0) {
         homepageGrid.innerHTML = `
@@ -139,12 +139,15 @@ function loadHomepageProducts(products = null) {
         const productName = product.title || product.name || "Untitled";
         const productDescription = product.description || "";
         const productPrice = product.price ?? 0;
+        const productId = product._id || product.id;
 
         const card = document.createElement("article");
-        card.className = "collection-card reveal";
+        card.className = "product-card collection-card reveal";
         card.dataset.category = category;
         card.dataset.metal = metalType;
         card.dataset.price = productPrice;
+        card.style.cursor = "pointer";
+        card.onclick = () => window.location.href = `product.html?id=${productId}`;
         
         card.innerHTML = `
             <div class="collection-card__media" style="${primaryImage ? `background-image: url(${primaryImage}); background-size: cover; background-position: center;` : ''}">
@@ -168,7 +171,7 @@ function loadHomepageProducts(products = null) {
                 </dl>
                 <div class="collection-card__footer">
                     <span class="price">₹${productPrice.toLocaleString('en-IN', {minimumFractionDigits: 0, maximumFractionDigits: 0})}</span>
-                    <a class="cta cta-small" href="collection.html">${isLowStock ? "Reserve Now" : "Shop Now"}</a>
+                    <a class="cta cta-small" href="product.html?id=${productId}">${isLowStock ? "View Details" : "View Details"}</a>
                 </div>
             </div>
         `;
@@ -301,4 +304,59 @@ if (!document.querySelector("#customer-stock-styles")) {
         }
     `;
     document.head.appendChild(style);
+}
+
+// Initialize carousel navigation
+function initializeCarousel() {
+    const carousel = document.querySelector('.collection-carousel');
+    const prevBtn = document.querySelector('.carousel-btn-prev');
+    const nextBtn = document.querySelector('.carousel-btn-next');
+    
+    if (!carousel || !prevBtn || !nextBtn) return;
+
+    let scrollAmount = 0;
+    
+    // Calculate scroll amount based on card width + gap
+    const updateScrollAmount = () => {
+        const card = carousel.querySelector('.product-card');
+        if (card) {
+            const cardWidth = card.offsetWidth;
+            const gap = parseInt(window.getComputedStyle(carousel).gap) || 24;
+            scrollAmount = cardWidth + gap;
+        }
+    };
+
+    const updateButtons = () => {
+        prevBtn.disabled = carousel.scrollLeft <= 0;
+        nextBtn.disabled = carousel.scrollLeft >= carousel.scrollWidth - carousel.offsetWidth - 10;
+    };
+
+    prevBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+        carousel.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    });
+
+    carousel.addEventListener('scroll', updateButtons);
+    
+    // Update on resize and initial load
+    window.addEventListener('resize', () => {
+        updateScrollAmount();
+        updateButtons();
+    });
+    
+    // Initialize after a short delay to ensure products are loaded
+    setTimeout(() => {
+        updateScrollAmount();
+        updateButtons();
+    }, 500);
+}
+
+// Initialize carousel when DOM is ready
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeCarousel);
+} else {
+    initializeCarousel();
 }

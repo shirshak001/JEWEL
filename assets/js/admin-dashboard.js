@@ -208,54 +208,67 @@ function renderInventory() {
 // Initialize add product form
 function initializeProductForm() {
     const form = document.getElementById("add-product-form");
-    const imageInput = document.getElementById("product-image");
-    const preview = document.getElementById("image-preview");
+    const imagesInput = document.getElementById("product-images");
+    const preview = document.getElementById("images-preview");
 
-    imageInput.addEventListener("change", (e) => {
-        const file = e.target.files[0];
-        if (file) {
+    imagesInput.addEventListener("change", (e) => {
+        preview.innerHTML = "";
+        const files = Array.from(e.target.files);
+        
+        files.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = (event) => {
-                preview.innerHTML = `<img src="${event.target.result}" alt="Preview">`;
+                const imgContainer = document.createElement("div");
+                imgContainer.className = "preview-image-item";
+                imgContainer.innerHTML = `
+                    <img src="${event.target.result}" alt="Preview ${index + 1}">
+                    <span class="image-badge">${index === 0 ? 'Primary' : `Image ${index + 1}`}</span>
+                `;
+                preview.appendChild(imgContainer);
             };
             reader.readAsDataURL(file);
-        }
+        });
     });
 
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const feedback = form.querySelector(".form-feedback");
 
-        const imageFile = imageInput.files[0];
-        let imageData = "";
+        const imageFiles = Array.from(imagesInput.files);
+        let imagesData = [];
 
-        if (imageFile) {
-            const reader = new FileReader();
-            reader.onload = async (event) => {
-                imageData = event.target.result;
-                await addProduct(imageData, feedback);
-            };
-            reader.readAsDataURL(imageFile);
-        } else {
-            await addProduct(imageData, feedback);
+        if (imageFiles.length > 0) {
+            const promises = imageFiles.map(file => {
+                return new Promise((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = (event) => resolve(event.target.result);
+                    reader.readAsDataURL(file);
+                });
+            });
+            
+            imagesData = await Promise.all(promises);
         }
+
+        await addProduct(imagesData, feedback);
     });
 }
 
-async function addProduct(imageData, feedback) {
+async function addProduct(imagesData, feedback) {
+    const productName = document.getElementById("product-name").value;
+    
     const newProduct = {
-        title: document.getElementById("product-name").value,
-        slug: generateSlug(document.getElementById("product-name").value),
+        title: productName,
+        slug: generateSlug(productName),
         description: document.getElementById("product-description").value,
         price: parseFloat(document.getElementById("product-price").value),
         salePrice: null,
         categories: [],
         tags: [],
-        images: imageData ? [{
-            url: imageData,
-            alt: document.getElementById("product-name").value,
-            isPrimary: true
-        }] : [],
+        images: imagesData.map((url, index) => ({
+            url: url,
+            alt: `${productName} - Image ${index + 1}`,
+            isPrimary: index === 0
+        })),
         inventory: {
             sku: generateSKU(),
             stock: parseInt(document.getElementById("product-quantity").value)
@@ -291,7 +304,7 @@ async function addProduct(imageData, feedback) {
             renderAlerts();
 
             document.getElementById("add-product-form").reset();
-            document.getElementById("image-preview").innerHTML = "";
+            document.getElementById("images-preview").innerHTML = "";
         } else {
             throw new Error(data.error || 'Failed to add product');
         }

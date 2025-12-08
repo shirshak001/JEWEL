@@ -138,22 +138,25 @@ function renderProducts(products) {
         const primaryImage = product.images?.find(img => img.isPrimary || img.is_primary)?.url || product.images?.[0]?.url || product.image || "";
         const productName = product.title || product.name || "Untitled";
         const productPrice = product.price ?? 0;
+        const hasMultipleImages = Array.isArray(product.images) && product.images.length > 1;
+        const productId = product._id || product.id;
 
         return `
-            <div class="product-card" 
-                 data-id="${product.id}" 
+            <div class="product-card ${hasMultipleImages ? 'has-stack' : ''}" 
+                 data-id="${productId}" 
                  data-category="${category}" 
                  data-metal="${metalType}" 
                  data-price="${productPrice}">
                 <div class="product-image">
                     ${primaryImage ? `<img src="${primaryImage}" alt="${productName}" loading="lazy">` : '<div class="no-image">No Image</div>'}
+                    ${hasMultipleImages ? `<div class="stack-badge">${product.images.length} Photos</div>` : ''}
                     ${lowStock ? `<div class="stock-badge">Only ${stock} left</div>` : ''}
                 </div>
                 <div class="product-info">
                     <h3>${productName}</h3>
                     <p class="product-metal">${metal}</p>
                     <p class="product-price">₹${productPrice.toLocaleString('en-IN')}</p>
-                    <button class="btn-add-to-cart" data-id="${product.id}">Add to Cart</button>
+                    <button class="btn-add-to-cart" data-id="${productId}">Add to Cart</button>
                 </div>
             </div>
         `;
@@ -185,9 +188,9 @@ function determineMetalType(metal) {
 function attachAddToCartListeners() {
     document.querySelectorAll('.btn-add-to-cart').forEach(btn => {
         btn.addEventListener('click', (e) => {
-            const productId = parseInt(e.target.dataset.id);
+            const productId = e.target.dataset.id;
             const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
-            const product = products.find(p => p.id === productId);
+            const product = products.find(p => (p._id && p._id.toString() === productId) || (p.id && p.id.toString() === productId));
             
             if (product && window.ShoppingCart) {
                 window.ShoppingCart.addItem(product);
@@ -342,3 +345,120 @@ function resetFilters() {
 
     applyFilters();
 }
+
+// ==================== Product Detail Modal ====================
+function openProductModal(productId) {
+    const products = JSON.parse(localStorage.getItem('amberProducts') || '[]');
+    const product = products.find(p => p.id === productId);
+    
+    if (!product) return;
+    
+    const modal = document.getElementById('product-modal');
+    const modalName = document.getElementById('modal-product-name');
+    const modalMetal = document.getElementById('modal-product-metal');
+    const modalPrice = document.getElementById('modal-product-price');
+    const modalDescription = document.getElementById('modal-product-description');
+    const modalStock = document.getElementById('modal-product-stock');
+    const modalAddCart = document.getElementById('modal-add-cart');
+    const modalGalleryMobile = document.getElementById('modal-gallery-mobile');
+    const modalGalleryDesktop = document.getElementById('modal-gallery-desktop');
+    
+    // Set product details
+    modalName.textContent = product.title || product.name || 'Product';
+    const metal = product.attributes?.find(a => a.name === "metal")?.value || product.metal || "";
+    modalMetal.textContent = metal;
+    modalPrice.textContent = `₹${(product.price ?? 0).toLocaleString('en-IN')}`;
+    modalDescription.textContent = product.description || 'No description available.';
+    
+    const stock = product.inventory?.stock ?? product.inventory?.stock_count ?? product.quantity ?? 0;
+    const threshold = product.lowStockThreshold ?? 5;
+    if (stock <= threshold) {
+        modalStock.innerHTML = `<strong>⚠️ Only ${stock} left in stock</strong>`;
+        modalStock.style.display = 'block';
+    } else {
+        modalStock.style.display = 'none';
+    }
+    
+    // Handle images
+    const images = Array.isArray(product.images) && product.images.length > 0 
+        ? product.images.map(img => img.url) 
+        : [product.image || ''];
+    
+    // Clear previous galleries
+    modalGalleryMobile.innerHTML = '';
+    modalGalleryDesktop.innerHTML = '';
+    
+    if (images.length > 1 && window.ImageStack) {
+        // Initialize mobile swipeable gallery
+        new ImageStack(modalGalleryMobile, images, {
+            mobileOnly: true,
+            mobileBreakpoint: 768,
+            sensitivity: 150
+        });
+    } else {
+        // Single image - show in both views
+        modalGalleryMobile.innerHTML = `<img src="${images[0]}" alt="${product.name}" style="width: 100%; border-radius: 12px;">`;
+    }
+    
+    // Desktop gallery (simple grid)
+    modalGalleryDesktop.innerHTML = images.map((src, i) => `
+        <div class="grid-image-item">
+            <img src="${src}" alt="${product.name} - Image ${i + 1}">
+        </div>
+    `).join('');
+    
+    // Add to cart handler
+    modalAddCart.onclick = () => {
+        if (window.ShoppingCart) {
+            window.ShoppingCart.addItem(product);
+            modal.classList.remove('active');
+        }
+    };
+    
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeProductModal() {
+    const modal = document.getElementById('product-modal');
+    modal.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+function initializeModal() {
+    const modal = document.getElementById('product-modal');
+    const modalClose = document.getElementById('modal-close');
+    const modalOverlay = document.getElementById('modal-overlay');
+    
+    if (modalClose) {
+        modalClose.addEventListener('click', closeProductModal);
+    }
+    
+    if (modalOverlay) {
+        modalOverlay.addEventListener('click', closeProductModal);
+    }
+    
+    // ESC key to close
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeProductModal();
+        }
+    });
+    
+    // Add click handlers to product cards
+    document.addEventListener('click', (e) => {
+        const productCard = e.target.closest('.product-card');
+        if (productCard && !e.target.closest('.btn-add-to-cart')) {
+            const productId = productCard.dataset.id;
+            window.location.href = `product.html?id=${productId}`;
+        }
+    });
+}
+
+// Initialize everything on DOM load
+document.addEventListener('DOMContentLoaded', () => {
+    loadProducts();
+    initializeFilters();
+    initializeModal();
+});

@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Product details - SoilBuddy Atelier">
+    <title>Product Details - SoilBuddy Atelier</title>
+    <link rel="stylesheet" href="assets/css/styles.css">
+</head>
+<body>
+    <header class="site-header">
+        <nav class="main-nav">
+            <div class="nav-container">
+                <a class="brand" href="index.html" aria-label="Amber Atelier home">
+                    <span class="brand-mark">Amber</span>
+                    <span class="brand-submark">Atelier</span>
+                </a>
+                
+                <button class="nav-toggle" id="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                    <span class="hamburger"></span>
+                </button>
+                
+                <div class="nav-menu" id="nav-menu">
+                    <ul class="nav-links">
+                        <li><a href="index.html" class="nav-link">Home</a></li>
+                        <li><a href="collection.html" class="nav-link">Shop</a></li>
+                        <li><a href="index.html#about" class="nav-link">About</a></li>
+                        <li><a href="index.html#contact" class="nav-link">Contact</a></li>
+                    </ul>
+                    
+                    <div class="nav-actions">
+                        <button class="cart-btn" id="cart-toggle" aria-label="Shopping cart">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                                <line x1="3" y1="6" x2="21" y2="6"></line>
+                                <path d="M16 10a4 4 0 0 1-8 0"></path>
+                            </svg>
+                            <span class="cart-count" id="cart-count">0</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <main class="product-page">
+        <nav class="breadcrumb">
+            <div class="container">
+                <a href="index.html">Home</a>
+                <span>/</span>
+                <a href="collection.html">Shop</a>
+                <span>/</span>
+                <span id="breadcrumb-product">Product</span>
+            </div>
+        </nav>
+
+        <section class="product-detail">
+            <div class="container">
+                <div class="product-layout">
+                    <!-- Image Gallery -->
+                    <div class="product-gallery-section">
+                        <!-- Mobile: Swipeable Stack -->
+                        <div class="product-gallery-mobile" id="product-gallery-mobile"></div>
+                        
+                        <!-- Desktop: Main + Thumbnails -->
+                        <div class="product-gallery-desktop" id="product-gallery-desktop">
+                            <div class="gallery-main">
+                                <img id="main-image" src="" alt="Product">
+                            </div>
+                            <div class="gallery-thumbnails" id="gallery-thumbnails"></div>
+                        </div>
+                    </div>
+
+                    <!-- Product Info -->
+                    <div class="product-info-section">
+                        <h1 id="product-title">Loading...</h1>
+                        <p class="product-metal-type" id="product-metal"></p>
+                        <p class="product-price-large" id="product-price">₹0</p>
+                        
+                        <div class="product-stock-info" id="product-stock"></div>
+                        
+                        <div class="product-description">
+                            <h3>Description</h3>
+                            <p id="product-description"></p>
+                        </div>
+
+                        <div class="product-attributes" id="product-attributes"></div>
+
+                        <div class="product-actions">
+                            <button class="btn btn-primary btn-large" id="add-to-cart-btn">
+                                Add to Cart
+                            </button>
+                            <button class="btn btn-secondary btn-large" id="view-cart-btn">
+                                View Cart
+                            </button>
+                        </div>
+
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                <span>Handcrafted by master artisans</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                                </svg>
+                                <span>Lifetime warranty included</span>
+                            </div>
+                            <div class="meta-item">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                    <polyline points="12 6 12 12 16 14"></polyline>
+                                </svg>
+                                <span>Ships within 2-3 business days</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section class="recommendations-section">
+            <div class="container">
+                <h2 class="section-title">You May Also Like</h2>
+                <p class="section-subtitle">Discover more pieces from our collection</p>
+                
+                <div class="recommendations-grid" id="recommendations-grid">
+                    <!-- Recommendations will be loaded dynamically -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3 class="brand">
+                    <span class="brand-mark">Amber</span>
+                    <span class="brand-submark">Atelier</span>
+                </h3>
+                <p>Timeless elegance, consciously crafted.</p>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-column">
+                    <h4>Shop</h4>
+                    <ul>
+                        <li><a href="collection.html">All Jewelry</a></li>
+                        <li><a href="collection.html">Rings</a></li>
+                        <li><a href="collection.html">Necklaces</a></li>
+                        <li><a href="collection.html">Earrings</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="index.html#about">Our Story</a></li>
+                        <li><a href="index.html#contact">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2024 Amber Atelier. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <aside class="cart-drawer" id="cart-drawer">
+        <div class="cart-header">
+            <h2>Your Cart</h2>
+            <button class="cart-close" id="cart-close" aria-label="Close cart">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="cart-items" id="cart-items">
+            <p class="cart-empty">Your cart is empty</p>
+        </div>
+        <div class="cart-footer">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cart-total">₹0</span>
+            </div>
+            <a href="checkout.html" class="btn btn-primary btn-block">Proceed to Checkout</a>
+        </div>
+    </aside>
+
+    <button class="back-to-top" id="back-to-top" aria-label="Back to top">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="19" x2="12" y2="5"></line>
+            <polyline points="5 12 12 5 19 12"></polyline>
+        </svg>
+    </button>
+
+    <script src="assets/js/main.js" defer></script>
+    <script src="assets/js/cart.js" defer></script>
+    <script src="assets/js/image-stack.js" defer></script>
+    <script src="assets/js/product-detail.js" defer></script>
+</body>
+</html>

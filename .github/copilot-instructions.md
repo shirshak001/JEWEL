@@ -62,12 +62,15 @@
 - Customer jewellery website with dynamic inventory
 - Admin portal with JWT-based secure authentication
 - Backend API with MongoDB Atlas database
-- Add/Edit/Delete products with image upload via admin panel
+- **Multiple image upload** with primary image designation in admin panel
 - Products saved to MongoDB and sync across all devices
 - Automatic stock quantity tracking
 - Low stock warnings on both customer and admin sides
 - Out-of-stock items hidden from customers
 - Real-time inventory sync between admin and customer views
+- **Mobile swipeable image gallery** (stack-based card interaction)
+- **Dedicated product detail pages** with full specifications
+- **Product recommendations** section showing related items
 - Email notifications via EmailJS
 - Payment processing via Razorpay
 - Deployed on Vercel (frontend) and Render (backend)

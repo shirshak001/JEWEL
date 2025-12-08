@@ -7,6 +7,8 @@ Premium single-page website concept for a luxury jewellery house with integrated
 ### Customer Site
 - Hero section with premium typography, layered backgrounds, and consultation call to action
 - Dynamic collections grid that pulls from admin inventory with real-time stock warnings
+- **Dedicated product detail pages** with full specifications and gallery
+- **Recommendations section** showing related products below each product
 - Story-driven about section with conscious material sourcing highlights
 - Client testimonial showcase and accessible contact form with inline feedback
 - Responsive navigation, sticky header, reveal animations, and back-to-top control
@@ -16,16 +18,27 @@ Premium single-page website concept for a luxury jewellery house with integrated
 ### Admin Portal
 - Secure login system (separate from customer site at `/admin/login.html`)
 - Full inventory dashboard with add/edit/delete product functionality
-- Image upload support for product photos
+- **Multiple image upload** for each product (with primary image designation)
 - Automatic stock level tracking and alerts
 - Low stock threshold configuration per product
 - Stock filtering (all, low stock, out of stock, available)
 - Real-time warnings on dashboard when products need restocking
 - Products automatically sync to customer site
 
+### Mobile Gallery
+- **Swipeable image stack** for products with multiple photos (mobile only)
+- Interactive card-based gallery with touch/drag gestures
+- Automatic fallback to grid view on desktop
+- Smooth animations and transitions
+- Click or swipe to cycle through images
+- Product detail modal with full-size images
+
 ## Structure
 ```
 index.html                  Main customer landing page
+product.html                Individual product detail page
+collection.html             Product collection/shop page
+checkout.html               Checkout page
 admin/
   login.html               Admin authentication page
   dashboard.html           Admin inventory management dashboard
@@ -38,6 +51,10 @@ assets/
     customer-inventory.js  Syncs admin inventory to customer display
     admin-auth.js          Admin login handling
     admin-dashboard.js     Inventory management logic
+    image-stack.js         Mobile swipeable gallery component
+    collection.js          Product collection page with modal
+    product-detail.js      Product detail page logic
+    cart.js                Shopping cart functionality
   images/                  Product images uploaded via admin
 ```
 
@@ -84,10 +101,25 @@ assets/
 ### Adding Products
 1. Go to "Add Product" in admin dashboard
 2. Fill in product details (name, price, description, metal, gemstone)
-3. Upload product image
+3. Upload multiple product images (first image becomes primary)
 4. Set initial stock quantity
 5. Set low stock threshold (when warnings appear)
 6. Product is saved to MongoDB and appears on customer site immediately
+
+### Viewing Products (Customer)
+- Products with multiple images show a badge indicating photo count
+- Click any product card to open dedicated product detail page
+- **Product Detail Page Features:**
+  - Full-size image gallery with swipeable stack on mobile
+  - Complete product specifications and attributes
+  - Stock availability indicators
+  - Add to cart functionality
+  - "You May Also Like" recommendations section below
+  - Breadcrumb navigation
+  - Product metadata (handcrafted, warranty, shipping info)
+- **Mobile**: Swipe through images using the interactive stack gallery
+- **Desktop**: Main image with thumbnail navigation
+- Add to cart from product cards, detail page, or recommendations
 
 ### Stock Management
 - **Available**: Quantity above threshold - shows normally to customers
