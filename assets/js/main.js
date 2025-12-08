@@ -35,12 +35,20 @@ document.addEventListener("DOMContentLoaded", () => {
         navToggle.addEventListener("click", () => {
             const expanded = navToggle.getAttribute("aria-expanded") === "true";
             navToggle.setAttribute("aria-expanded", String(!expanded));
+            
+            // Toggle body scroll lock
+            if (!expanded) {
+                document.body.classList.add("nav-open");
+            } else {
+                document.body.classList.remove("nav-open");
+            }
         });
 
         // Close menu when clicking on a link
         navLinks.forEach(link => {
             link.addEventListener("click", (e) => {
                 navToggle.setAttribute("aria-expanded", "false");
+                document.body.classList.remove("nav-open");
                 
                 // Handle smooth scrolling for same-page anchor links
                 const href = link.getAttribute("href");
