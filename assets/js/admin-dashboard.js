@@ -211,23 +211,55 @@ function initializeProductForm() {
     const imagesInput = document.getElementById("product-images");
     const preview = document.getElementById("images-preview");
 
+    let selectedPrimaryIndex = 0;
+    
     imagesInput.addEventListener("change", (e) => {
         preview.innerHTML = "";
         const files = Array.from(e.target.files);
+        selectedPrimaryIndex = 0;
         
         files.forEach((file, index) => {
             const reader = new FileReader();
             reader.onload = (event) => {
                 const imgContainer = document.createElement("div");
                 imgContainer.className = "preview-image-item";
+                imgContainer.dataset.index = index;
                 imgContainer.innerHTML = `
                     <img src="${event.target.result}" alt="Preview ${index + 1}">
-                    <span class="image-badge">${index === 0 ? 'Primary' : `Image ${index + 1}`}</span>
+                    <div class="image-controls">
+                        <span class="image-badge ${index === 0 ? 'primary' : ''}">${index === 0 ? 'Primary' : `Image ${index + 1}`}</span>
+                        <button type="button" class="btn-set-primary" data-index="${index}" ${index === 0 ? 'style="display:none"' : ''}>Set as Primary</button>
+                    </div>
                 `;
                 preview.appendChild(imgContainer);
             };
             reader.readAsDataURL(file);
         });
+        
+        // Add event delegation for primary selection
+        setTimeout(() => {
+            preview.querySelectorAll('.btn-set-primary').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const newPrimaryIndex = parseInt(e.target.dataset.index);
+                    selectedPrimaryIndex = newPrimaryIndex;
+                    
+                    // Update UI
+                    preview.querySelectorAll('.preview-image-item').forEach((item, idx) => {
+                        const badge = item.querySelector('.image-badge');
+                        const btn = item.querySelector('.btn-set-primary');
+                        if (idx === newPrimaryIndex) {
+                            badge.textContent = 'Primary';
+                            badge.classList.add('primary');
+                            btn.style.display = 'none';
+                        } else {
+                            badge.textContent = `Image ${idx + 1}`;
+                            badge.classList.remove('primary');
+                            btn.style.display = 'inline-block';
+                        }
+                    });
+                });
+            });
+        }, 100);
     });
 
     form.addEventListener("submit", async (e) => {
@@ -267,7 +299,7 @@ async function addProduct(imagesData, feedback) {
         images: imagesData.map((url, index) => ({
             url: url,
             alt: `${productName} - Image ${index + 1}`,
-            isPrimary: index === 0
+            isPrimary: index === (window.selectedPrimaryIndex || 0)
         })),
         inventory: {
             sku: generateSKU(),

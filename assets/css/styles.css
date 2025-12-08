@@ -609,7 +609,7 @@ a:focus-visible {
 }
 
 .collection-carousel .product-card .collection-card__media {
-    height: 180px;
+    height: 240px;
 }
 
 .collection-carousel .product-card .collection-card__body {
@@ -694,6 +694,99 @@ a:focus-visible {
     background: var(--color-card);
     color: var(--color-accent);
     transform: translateY(-50%);
+}
+
+/* Card-level Image Carousel */
+.card-carousel-container {
+    position: relative;
+    overflow: hidden;
+}
+
+.card-carousel-images {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+
+.card-carousel-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.card-carousel-image.active {
+    opacity: 1;
+}
+
+.card-carousel-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    background: rgba(18, 18, 23, 0.7);
+    color: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 5;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    opacity: 0;
+}
+
+.card-carousel-container:hover .card-carousel-btn {
+    opacity: 1;
+}
+
+.card-carousel-btn:hover {
+    background: var(--color-accent);
+    color: var(--color-background);
+    transform: translateY(-50%) scale(1.1);
+}
+
+.card-carousel-prev {
+    left: 0.5rem;
+}
+
+.card-carousel-next {
+    right: 0.5rem;
+}
+
+.card-carousel-dots {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 5;
+}
+
+.card-carousel-dots .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.card-carousel-dots .dot.active {
+    background: var(--color-accent);
+    width: 24px;
+    border-radius: 4px;
+}
+
+.card-carousel-dots .dot:hover {
+    background: rgba(201, 164, 99, 0.7);
 }
 
 .collection-grid {

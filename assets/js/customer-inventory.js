@@ -147,12 +147,41 @@ function loadHomepageProducts(products = null) {
         card.dataset.metal = metalType;
         card.dataset.price = productPrice;
         card.style.cursor = "pointer";
-        card.onclick = () => window.location.href = `product.html?id=${productId}`;
         
-        card.innerHTML = `
+        // Prepare image carousel if multiple images
+        const allImages = product.images || [];
+        const hasMultipleImages = allImages.length > 1;
+        
+        const imageCarouselHTML = hasMultipleImages ? `
+            <div class="card-carousel-container collection-card__media">
+                <div class="card-carousel-images">
+                    ${allImages.map((img, idx) => `
+                        <div class="card-carousel-image ${idx === 0 ? 'active' : ''}" style="background-image: url(${img.url || img}); background-size: cover; background-position: center;"></div>
+                    `).join('')}
+                </div>
+                <button class="card-carousel-btn card-carousel-prev" aria-label="Previous image" onclick="event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                </button>
+                <button class="card-carousel-btn card-carousel-next" aria-label="Next image" onclick="event.stopPropagation()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                </button>
+                <div class="card-carousel-dots">
+                    ${allImages.map((_, idx) => `<span class="dot ${idx === 0 ? 'active' : ''}" data-index="${idx}"></span>`).join('')}
+                </div>
+            </div>
+        ` : `
             <div class="collection-card__media" style="${primaryImage ? `background-image: url(${primaryImage}); background-size: cover; background-position: center;` : ''}">
                 ${!primaryImage ? '<span style="color: var(--color-muted);">Image Coming Soon</span>' : ''}
             </div>
+        `;
+        
+        card.onclick = () => window.location.href = `product.html?id=${productId}`;
+        
+        card.innerHTML = imageCarouselHTML + `
             <div class="collection-card__body">
                 <h3>${productName}</h3>
                 <p>${productDescription}</p>
@@ -176,6 +205,11 @@ function loadHomepageProducts(products = null) {
             </div>
         `;
         homepageGrid.appendChild(card);
+        
+        // Initialize carousel for this card if multiple images
+        if (hasMultipleImages) {
+            initializeCardCarousel(card);
+        }
     });
 
     // Re-initialize reveal animations for new elements
@@ -359,4 +393,44 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initializeCarousel);
 } else {
     initializeCarousel();
+}
+
+// Initialize card-level image carousel
+function initializeCardCarousel(card) {
+    const images = card.querySelectorAll('.card-carousel-image');
+    const prevBtn = card.querySelector('.card-carousel-prev');
+    const nextBtn = card.querySelector('.card-carousel-next');
+    const dots = card.querySelectorAll('.dot');
+    let currentIndex = 0;
+    
+    if (!images.length || !prevBtn || !nextBtn) return;
+    
+    function showImage(index) {
+        images.forEach((img, idx) => {
+            img.classList.toggle('active', idx === index);
+        });
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === index);
+        });
+        currentIndex = index;
+    }
+    
+    prevBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const newIndex = (currentIndex - 1 + images.length) % images.length;
+        showImage(newIndex);
+    });
+    
+    nextBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const newIndex = (currentIndex + 1) % images.length;
+        showImage(newIndex);
+    });
+    
+    dots.forEach((dot, idx) => {
+        dot.addEventListener('click', (e) => {
+            e.stopPropagation();
+            showImage(idx);
+        });
+    });
 }
