@@ -164,6 +164,14 @@ textarea:focus {
     color: var(--color-danger);
 }
 
+.form-feedback[data-state="warning"] {
+    color: #f2b84b;
+}
+
+.form-feedback[data-state="info"] {
+    color: var(--color-accent);
+}
+
 .dashboard-page {
     display: flex;
     min-height: 100vh;

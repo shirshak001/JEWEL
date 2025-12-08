@@ -265,6 +265,22 @@ function initializeProductForm() {
     form.addEventListener("submit", async (e) => {
         e.preventDefault();
         const feedback = form.querySelector(".form-feedback");
+        
+        // Check for duplicate product names
+        const productName = document.getElementById("product-name").value.trim();
+        const duplicateExists = products.some(p => 
+            p.title && p.title.toLowerCase() === productName.toLowerCase()
+        );
+        
+        if (duplicateExists) {
+            const confirmAdd = confirm(`A product named "${productName}" already exists. Do you want to add it anyway with a unique identifier?`);
+            if (!confirmAdd) {
+                feedback.textContent = "Product addition cancelled.";
+                feedback.dataset.state = "warning";
+                setTimeout(() => feedback.textContent = "", 3000);
+                return;
+            }
+        }
 
         const imageFiles = Array.from(imagesInput.files);
         let imagesData = [];
@@ -337,27 +353,77 @@ async function addProduct(imagesData, feedback) {
 
             document.getElementById("add-product-form").reset();
             document.getElementById("images-preview").innerHTML = "";
+            window.selectedPrimaryIndex = 0;
+            
+            // Scroll to inventory section
+            document.querySelector('[href="#inventory"]').click();
         } else {
+            // Handle duplicate slug/SKU error
+            if (response.status === 400 && data.error && data.error.includes('slug')) {
+                feedback.textContent = "Product name already exists. Adding unique identifier...";
+                feedback.dataset.state = "warning";
+                
+                // Retry with unique slug
+                setTimeout(async () => {
+                    newProduct.slug = generateSlug(productName, true);
+                    newProduct.inventory.sku = generateSKU();
+                    
+                    try {
+                        const retryResponse = await fetch(`${API_URL}/api/admin/products`, {
+                            method: 'POST',
+                            headers: getAuthHeaders(),
+                            body: JSON.stringify(newProduct)
+                        });
+                        
+                        if (retryResponse.ok) {
+                            feedback.textContent = "Product added successfully with unique ID!";
+                            feedback.dataset.state = "success";
+                            await loadProducts();
+                            renderInventory();
+                            renderAlerts();
+                            document.getElementById("add-product-form").reset();
+                            document.getElementById("images-preview").innerHTML = "";
+                            window.selectedPrimaryIndex = 0;
+                            document.querySelector('[href="#inventory"]').click();
+                        } else {
+                            throw new Error('Retry failed');
+                        }
+                    } catch (retryError) {
+                        feedback.textContent = "Failed to add product. Please try again with a different name.";
+                        feedback.dataset.state = "error";
+                    }
+                }, 1000);
+                return;
+            }
             throw new Error(data.error || 'Failed to add product');
         }
     } catch (error) {
         console.error('Error adding product:', error);
-        feedback.textContent = `Error: ${error.message}`;
+        feedback.textContent = `Error: ${error.message || 'Failed to add product. Please check your connection.'}`;
         feedback.dataset.state = "error";
     }
 
     setTimeout(() => {
-        feedback.textContent = "";
-    }, 3000);
+        if (feedback.dataset.state !== "warning") {
+            feedback.textContent = "";
+        }
+    }, 5000);
 }
 
-function generateSlug(title) {
-    return title
+function generateSlug(title, addUnique = false) {
+    const baseSlug = title
         .toLowerCase()
         .replace(/[^\w\s-]/g, '')
         .replace(/\s+/g, '-')
         .replace(/-+/g, '-')
         .trim();
+    
+    if (addUnique) {
+        const uniqueSuffix = Date.now().toString().slice(-6);
+        return `${baseSlug}-${uniqueSuffix}`;
+    }
+    
+    return baseSlug;
 }
 
 function generateSKU() {
